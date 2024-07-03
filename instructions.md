@@ -18,7 +18,7 @@ For detailed instructions on using SimpleX, check out the <a href="https://simpl
 
 1. Follow instructions in the <a href="https://docs.start9.com">Start9 docs</a> for running Tor on your client device (phone/laptop).
 
-1. Download and Install the<a href="https://simplex.chat/" target="_blank">SimpleX app</a> to your client device.
+1. Download and Install the <a href="https://simplex.chat/" target="_blank">SimpleX app</a> to your client device.
 
 1. During initial setup, if you choose to crete a profile, _do not_ create a SimpleX address. You can do this later after you connect to your own server.
 

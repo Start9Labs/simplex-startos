@@ -4,7 +4,7 @@ version: 5.8.1
 release-notes: |
   - SMP upstream update to 5.8.1
   - Added XFTP Server
-  - Instructions change 
+  - Instructions update
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/simplex-startos"
 upstream-repo: "https://github.com/simplex-chat/simplexmq/"

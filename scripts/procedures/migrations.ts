@@ -3,7 +3,7 @@ import { compat, types as T } from "../deps.ts";
 export const migration: T.ExpectedExports.migration =
   compat.migrations.fromMapping(
     {
-      "5.6.2": {
+      "5.8.1": {
         up: compat.migrations.updateConfig(
           (config: any) => {
             config["xftp-address"];
@@ -11,7 +11,7 @@ export const migration: T.ExpectedExports.migration =
             return config;
           },
           true,
-          { version: "5.6.2", type: "up" }
+          { version: "5.8.1", type: "up" }
         ),
         down: compat.migrations.updateConfig(
           (config: any) => {
@@ -20,7 +20,7 @@ export const migration: T.ExpectedExports.migration =
             return config;
           },
           true,
-          { version: "5.6.2", type: "down" }
+          { version: "5.8.1", type: "down" }
         ),
       },
     },
