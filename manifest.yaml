@@ -1,8 +1,8 @@
 id: simplex
 title: "SimpleX Server"
-version: 5.8.1
+version: 5.8.2
 release-notes: |
-  - SMP upstream update to 5.8.1
+  - SMP upstream update to 5.8.2
   - Added XFTP Server
   - Instructions update
 license: MIT
