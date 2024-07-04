@@ -30,6 +30,10 @@ main:
     conf: /etc/opt/simplex
     xftp: /etc/opt/simplex-xftp
     log: /var/opt/simplex
+hardware-requirements:
+  arch:
+    - x86_64
+    - aarch64
 health-checks:
   api:
     name: Listening
