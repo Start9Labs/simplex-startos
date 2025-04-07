@@ -1,9 +1,8 @@
-simplex.s9pk
-image.tar
-scripts/*.js
+*.s9pk
+startos/*.js
+node_modules/
 .DS_Store
 .vscode/
 docker-images
-/assets/.$explainer-source.drawio.dtmp
-/assets/.$explainer-source.drawio.bkp
-/_site
+javascript
+ncc-cache
