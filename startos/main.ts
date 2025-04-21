@@ -10,6 +10,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
   console.info('Starting SimpleX!')
 
+  const simplexSub = await sdk.SubContainer.of(
+    effects,
+    { imageId: 'simplex' },
+    sdk.Mounts.of().addVolume('main', null, '/data', false),
+    'simplex-sub',
+  )
+
   /**
    * ======================== Additional Health Checks (optional) ========================
    *
@@ -26,9 +33,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
   return sdk.Daemons.of(effects, started, additionalChecks)
     .addDaemon('smp', {
-      subcontainer: { imageId: 'simplex' },
+      subcontainer: simplexSub,
       command: ['smp-server', 'start', '+RTS', '-N', '-RTS'],
-      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
       ready: {
         display: 'SMP Server',
         fn: () =>
@@ -40,9 +46,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       requires: [],
     })
     .addDaemon('xftp', {
-      subcontainer: { imageId: 'simplex' },
+      subcontainer: simplexSub,
       command: ['xftp-server', 'start', '+RTS', '-N', '-RTS'],
-      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
       ready: {
         display: 'XFTP Server',
         fn: () =>

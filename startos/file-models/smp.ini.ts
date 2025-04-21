@@ -137,7 +137,7 @@ const shape = object({
   }),
 })
 
-export const smpConfigFile = FileHelper.toml(
+export const smpConfigFile = FileHelper.ini(
   '/media/startos/volumes/main/etc/opt/simplex/smp-server.ini',
   shape,
 )
