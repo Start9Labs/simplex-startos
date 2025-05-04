@@ -4,7 +4,7 @@ import { source_code } from './utils'
 export const manifest = setupManifest({
   id: 'simplex',
   title: 'SimpleX Server',
-  license: 'mit',
+  license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/simplex-startos',
   upstreamRepo: source_code,
   supportSite: 'https://github.com/simplex-chat/simplexmq/issues',
