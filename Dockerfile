@@ -55,8 +55,8 @@ COPY --from=build /final /usr/local/bin/
 # simplexmq requires using SIGINT to correctly preserve undelivered messages and restore them on restart
 STOPSIGNAL SIGINT
 
-ADD ./check-syn-ack.sh /usr/local/bin/check-syn-ack.sh
-RUN chmod a+x /usr/local/bin/check-syn-ack.sh
+# ADD ./check-syn-ack.sh /usr/local/bin/check-syn-ack.sh
+# RUN chmod a+x /usr/local/bin/check-syn-ack.sh
 
-ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
-RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
+# ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
+# RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
