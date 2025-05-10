@@ -13,7 +13,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const simplexSub = await sdk.SubContainer.of(
     effects,
     { imageId: 'simplex' },
-    sdk.Mounts.of().addVolume('main', null, '/data', false),
+    sdk.Mounts.of().mountVolume({
+      volumeId: 'main',
+      subpath: null,
+      mountpoint: '/data',
+      readonly: false,
+    }),
     'simplex-sub',
   )
 
