@@ -18,7 +18,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: null,
     path: '',
-    search: {},
+    query: {},
   })
   const smpReceipt = await smpMultiOrigin.export([smp])
 
@@ -35,7 +35,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: null,
     path: '',
-    search: {},
+    query: {},
   })
   const adminReceipt = await adminMultiOrigin.export([admin])
 
@@ -53,7 +53,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: null,
     path: '',
-    search: {},
+    query: {},
   })
   const xftpReceipt = await xftpMultiOrigin.export([xftp])
 
