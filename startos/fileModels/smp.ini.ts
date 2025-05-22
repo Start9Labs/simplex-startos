@@ -138,6 +138,9 @@ const shape = object({
 })
 
 export const smpConfigFile = FileHelper.ini(
-  '/media/startos/volumes/main/etc/opt/simplex/smp-server.ini',
+  {
+    volumeId: 'main',
+    subpath: '/etc/opt/simplex/smp-server.ini',
+  },
   shape,
 )
