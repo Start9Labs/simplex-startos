@@ -39,7 +39,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   return sdk.Daemons.of(effects, started, additionalChecks)
     .addDaemon('smp', {
       subcontainer: simplexSub,
-      command: ['smp-server', 'start', '+RTS', '-N', '-RTS'],
+      exec: { command: ['smp-server', 'start', '+RTS', '-N', '-RTS'] },
       ready: {
         display: 'SMP Server',
         fn: () =>
@@ -52,7 +52,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     })
     .addDaemon('xftp', {
       subcontainer: simplexSub,
-      command: ['xftp-server', 'start', '+RTS', '-N', '-RTS'],
+      exec: { command: ['xftp-server', 'start', '+RTS', '-N', '-RTS'] },
       ready: {
         display: 'XFTP Server',
         fn: () =>
