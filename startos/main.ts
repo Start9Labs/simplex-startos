@@ -8,7 +8,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    *
    * In this section, we fetch any resources or run any desired preliminary commands.
    */
-  console.info('Starting SimpleX!')
+  console.info('[i] Starting SimpleX!')
 
   const simplexSub = await sdk.SubContainer.of(
     effects,
