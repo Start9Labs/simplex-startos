@@ -36,7 +36,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    *
    * Each daemon defines its own health check, which can optionally be exposed to the user.
    */
-  return sdk.Daemons.of(effects, started, additionalChecks)
+  return sdk.Daemons.of(effects, started)
     .addDaemon('smp', {
       subcontainer: simplexSub,
       exec: { command: ['smp-server', 'start', '+RTS', '-N', '-RTS'] },
