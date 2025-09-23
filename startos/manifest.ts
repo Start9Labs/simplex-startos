@@ -16,7 +16,7 @@ export const manifest = setupManifest({
   supportSite: 'https://github.com/simplex-chat/simplexmq/issues',
   marketingSite: 'https://simplex.chat/',
     docsUrl:
-    'https://github.com/Start9Labs/simplex-startos/blob/master/instructions.md',
+    'https://github.com/Start9Labs/simplex-startos/blob/update/040/docs/README.md',
   donationUrl:
     'https://github.com/simplex-chat/simplex-chat#help-us-with-donations',
   // @TODO
