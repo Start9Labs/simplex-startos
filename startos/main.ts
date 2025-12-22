@@ -2,7 +2,7 @@ import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { smpPort, xftpPort } from './utils'
 
-export const main = sdk.setupMain(async ({ effects, started }) => {
+export const main = sdk.setupMain(async ({ effects }) => {
   /**
    * ======================== Setup (optional) ========================
    *
@@ -23,20 +23,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   )
 
   /**
-   * ======================== Additional Health Checks (optional) ========================
-   *
-   * In this section, we define *additional* health checks beyond those included with each daemon (below).
-   */
-  const additionalChecks: T.HealthCheck[] = []
-
-  /**
    * ======================== Daemons ========================
    *
    * In this section, we create one or more daemons that define the service runtime.
    *
    * Each daemon defines its own health check, which can optionally be exposed to the user.
    */
-  return sdk.Daemons.of(effects, started)
+  return sdk.Daemons.of(effects)
     .addDaemon('smp', {
       subcontainer: simplexSub,
       exec: { command: ['smp-server', 'start', '+RTS', '-N', '-RTS'] },
