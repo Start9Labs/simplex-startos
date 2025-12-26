@@ -1,95 +1,116 @@
+import { sdk } from './sdk'
+
 export const smpPort = 5223
-export const xftpPort = 443
-export const controlPort = 5224
-export const webPort = 443
+export const smpControlPort = 5224
 
-export const source_code = 'https://github.com/simplex-chat/simplexmq/'
+export const xftpPort = 5225
+export const xftpControlPort = 5226
 
-export const randomPassword = {
-  charset: 'a-z,A-Z,1-9,!,$,%,&,*',
-  len: 21,
-}
+export const smpStatePath = '/var/opt/simplex'
+export const xftpFilePath = '/srv/xftp'
+
+export const webPort = 8000
+
+export const smpMounts = sdk.Mounts.of()
+  .mountVolume({
+    volumeId: 'smp-configs',
+    subpath: null,
+    mountpoint: '/etc/opt/simplex',
+    readonly: false,
+  })
+  .mountVolume({
+    volumeId: 'smp-state',
+    subpath: null,
+    mountpoint: smpStatePath,
+    readonly: false,
+  })
+
+export const xftpMounts = sdk.Mounts.of()
+  .mountVolume({
+    volumeId: 'xftp-configs',
+    subpath: null,
+    mountpoint: '/etc/opt/simplex-xftp',
+    readonly: false,
+  })
+  .mountVolume({
+    volumeId: 'xftp-state',
+    subpath: null,
+    mountpoint: '/var/opt/simplex-xftp',
+    readonly: false,
+  })
+  .mountVolume({
+    volumeId: 'xftp-files',
+    subpath: null,
+    mountpoint: xftpFilePath,
+    readonly: false,
+  })
 
 export const smpConfigDefaults = {
-  information: {
-    // Basic info
-    LICENSE: undefined,
-    source_code,
-
-    // Server usage conditions and amendments.
-    usage_conditions: undefined,
-    condition_amendments: undefined,
-
-    // Server location and operator
-    server_country: undefined,
-    operator: undefined,
-    operator_country: undefined,
-    website: undefined,
-
-    // Administrative contacts
-    admin_simplex: undefined, // SimpleX address
-    admin_email: undefined,
-    admin_pgp: undefined,
-    admin_pgp_fingerprint: undefined,
-
-    // Contacts for complaints and feedback.
-    complaints_simplex: undefined, // SimpleX address
-    complaints_email: undefined,
-    complaints_pgp: undefined,
-    complaints_pgp_fingerprint: undefined,
-
-    // Hosting provider
-    hosting: undefined, // entity organization or person name
-    hosting_country: undefined, // ISO-3166 2-letter code
+  INFORMATION: {
+    source_code: 'https://github.com/simplex-chat/simplexmq/',
   },
-  store_log: {
-    enable: 'on' as const,
-
-    restore_messages: 'on' as const,
-    expire_messages_days: 21,
-    expire_ntfs_hours: 24,
-
-    log_stats: 'on' as const,
+  STORE_LOG: {
+    enable: 'on',
+    store_queues: 'memory',
+    store_messages: 'memory',
+    restore_messages: 'on',
+    expire_messages_days: 365, // @TODO ask Evgany
+    expire_messages_on_start: 'off',
+    expire_ntfs_hours: 168,
+    log_stats: 'on',
+    prometheus_interval: undefined,
   },
-  auth: {
-    new_queues: 'on' as const,
-
-    create_password: '', // any printable ASCII characters without whitespace, '@', ':' and '/'
-
-    control_port_admin_password: '',
-    control_port_user_password: '',
+  AUTH: {
+    new_queues: 'on',
+    control_port_admin_password: undefined,
+    control_port_user_password: undefined,
   },
-  transport: {
-    host: 'hostnames', // <domain/ip>
-    port: 5223,
-    log_tls_errors: 'off' as const,
-
-    websockets: 'off' as const,
-    control_port: controlPort,
+  TRANSPORT: {
+    host: '<hostnames>',
+    port: `${smpPort},443`,
+    log_tls_errors: 'off',
+    websockets: 'off',
+    control_port: smpControlPort,
   },
-  proxy: {
-    // Network configuration for SMP proxy client.
-    host_mode: 'public' as const,
-    required_host_mode: 'off' as const,
-
-    own_server_domains: [],
-
-    socks_proxy: '',
-    socks_mode: 'onion' as const,
-
+  PROXY: {
+    socks_proxy: '127.0.0.1:9050',
     client_concurrency: 32,
   },
-  inactive_clients: {
-    disconnect: 'off' as const,
-    ttl: 21600,
-    check_interval: 3600,
+  INACTIVE_CLIENTS: {
+    disconnect: 'off',
   },
-  web: {
-    static_path: 'var/opt/simplex/www',
-    http: undefined,
+  WEB: {
+    static_path: undefined,
+    http: webPort,
+    https: undefined,
+    cert: undefined,
+    key: undefined,
+  },
+} as const
 
-    https: webPort,
-    cert: '', // @TODO Aiden
-    key: '', // @TODO Aiden
+export const xftpConfigDefaults = {
+  STORE_LOG: {
+    enable: 'on',
+    expire_files_hours: 168,
+    log_stats: 'off',
+    prometheus_interval: undefined,
   },
-}
+  AUTH: {
+    new_files: 'on',
+    control_port_admin_password: undefined,
+    control_port_user_password: undefined,
+  },
+  TRANSPORT: {
+    host: '<hostnames>',
+    port: xftpPort,
+    log_tls_errors: 'off',
+    control_port: xftpControlPort,
+  },
+  FILES: {
+    path: xftpFilePath,
+    storage_quota: '10gb',
+  },
+  INACTIVE_CLIENTS: {
+    disconnect: 'off',
+  },
+} as const

@@ -1,28 +1,41 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { source_code } from './utils'
 
 export const manifest = setupManifest({
   id: 'simplex',
   title: 'SimpleX Server',
   license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/simplex-startos',
-  upstreamRepo: source_code,
-  supportSite: 'https://github.com/simplex-chat/simplexmq/issues',
+  upstreamRepo: 'https://github.com/simplex-chat/simplexmq/',
+  supportSite: 'https://github.com/simplex-chat/simplexmq//issues',
   marketingSite: 'https://simplex.chat/',
-    docsUrl:
-    'https://github.com/Start9Labs/simplex-startos/blob/update/040/docs/README.md',
+  docsUrl:
+    'https://github.com/Start9Labs/simplex-startos/blob/update/040/docs/instructions.md',
   donationUrl:
     'https://github.com/simplex-chat/simplex-chat#help-us-with-donations',
-  // @TODO
   description: {
-    short: '',
-    long: '',
+    short: 'Freedom & security of your communications',
+    long: 'An open-source, decentralized messenger designed for maximum privacy and control.',
   },
-  volumes: ['main'],
+  volumes: [
+    'smp-configs',
+    'smp-state',
+    'xftp-configs',
+    'xftp-state',
+    'xftp-files',
+    'main', // migration
+    'conf', // migration
+    'xftp', // migration
+    'log', // migration
+  ],
   images: {
-    simplex: {
+    smp: {
       source: {
-        dockerBuild: {},
+        dockerTag: 'simplexchat/smp-server:v6.4.5',
+      },
+    },
+    xftp: {
+      source: {
+        dockerTag: 'simplexchat/xftp-server:v6.4.5',
       },
     },
   },

@@ -1,6 +1,7 @@
+import { fileServerIni } from './fileModels/fileServer.ini'
+import { smpServerIni } from './fileModels/smpServer.ini'
 import { sdk } from './sdk'
-import { T } from '@start9labs/start-sdk'
-import { smpPort, xftpPort } from './utils'
+import { smpMounts, smpPort, xftpMounts, xftpPort } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
@@ -8,19 +9,17 @@ export const main = sdk.setupMain(async ({ effects }) => {
    *
    * In this section, we fetch any resources or run any desired preliminary commands.
    */
-  console.info('[i] Starting SimpleX!')
+  console.info('Starting SimpleX!')
 
-  const simplexSub = await sdk.SubContainer.of(
-    effects,
-    { imageId: 'simplex' },
-    sdk.Mounts.of().mountVolume({
-      volumeId: 'main',
-      subpath: null,
-      mountpoint: '/data',
-      readonly: false,
-    }),
-    'simplex-sub',
-  )
+  // confirm configuration files are present and restart service if they change
+  const smpIni = await smpServerIni.read().const(effects)
+  if (!smpIni) {
+    throw new Error('No smp-server.ini')
+  }
+  const fileIni = await fileServerIni.read().const(effects)
+  if (!fileIni) {
+    throw new Error('No file-server.ini')
+  }
 
   /**
    * ======================== Daemons ========================
@@ -31,8 +30,15 @@ export const main = sdk.setupMain(async ({ effects }) => {
    */
   return sdk.Daemons.of(effects)
     .addDaemon('smp', {
-      subcontainer: simplexSub,
-      exec: { command: ['smp-server', 'start', '+RTS', '-N', '-RTS'] },
+      subcontainer: await sdk.SubContainer.of(
+        effects,
+        { imageId: 'smp' },
+        smpMounts,
+        'smp-sub',
+      ),
+      exec: {
+        command: sdk.useEntrypoint(),
+      },
       ready: {
         display: 'SMP Server',
         fn: () =>
@@ -44,8 +50,15 @@ export const main = sdk.setupMain(async ({ effects }) => {
       requires: [],
     })
     .addDaemon('xftp', {
-      subcontainer: simplexSub,
-      exec: { command: ['xftp-server', 'start', '+RTS', '-N', '-RTS'] },
+      subcontainer: await sdk.SubContainer.of(
+        effects,
+        { imageId: 'xftp' },
+        xftpMounts,
+        'xftp-sub',
+      ),
+      exec: {
+        command: sdk.useEntrypoint(),
+      },
       ready: {
         display: 'XFTP Server',
         fn: () =>
