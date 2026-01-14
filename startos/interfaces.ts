@@ -6,7 +6,7 @@ import { smpServerIni } from './fileModels/smpServer.ini'
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   // get fingerprints
   const smpFingerprint = await FileHelper.string({
-    volumeId: 'smp-configs',
+    base: sdk.volumes['smp-configs'],
     subpath: './fingerprint',
   })
     .read()
@@ -14,7 +14,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     .then((f) => f?.trim())
 
   const xftpFingerprint = await FileHelper.string({
-    volumeId: 'xftp-configs',
+    base: sdk.volumes['xftp-configs'],
     subpath: './fingerprint',
   })
     .read()

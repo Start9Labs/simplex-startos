@@ -1,6 +1,7 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
 import { smpConfigDefaults, smpStatePath } from '../utils'
 import * as INI from './ini-lib'
+import { sdk } from '../sdk'
 
 const { object, string, literal, literals, natural, nill } = matches
 
@@ -137,7 +138,7 @@ const shape = object({
 
 export const smpServerIni = FileHelper.raw<typeof shape._TYPE>(
   {
-    volumeId: 'smp-configs',
+    base: sdk.volumes['smp-configs'],
     subpath: './smp-server.ini',
   },
   (inData) => INI.stringify(inData),

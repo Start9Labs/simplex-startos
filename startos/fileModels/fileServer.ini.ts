@@ -1,5 +1,6 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
 import { xftpConfigDefaults } from '../utils'
+import { sdk } from '../sdk'
 
 const { object, literals, natural, string, literal } = matches
 
@@ -77,7 +78,7 @@ const shape = object({
 
 export const fileServerIni = FileHelper.ini(
   {
-    volumeId: 'xftp-configs',
+    base: sdk.volumes['xftp-configs'],
     subpath: './file-server.ini',
   },
   shape,
