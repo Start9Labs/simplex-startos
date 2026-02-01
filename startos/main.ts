@@ -2,6 +2,7 @@ import { fileServerIni } from './fileModels/fileServer.ini'
 import { smpServerIni } from './fileModels/smpServer.ini'
 import { sdk } from './sdk'
 import { smpMounts, smpPort, xftpMounts, xftpPort } from './utils'
+import { i18n } from './i18n'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
@@ -9,16 +10,16 @@ export const main = sdk.setupMain(async ({ effects }) => {
    *
    * In this section, we fetch any resources or run any desired preliminary commands.
    */
-  console.info('Starting SimpleX!')
+  console.info(i18n('Starting SimpleX!'))
 
   // confirm configuration files are present and restart service if they change
   const smpIni = await smpServerIni.read().const(effects)
   if (!smpIni) {
-    throw new Error('No smp-server.ini')
+    throw new Error(i18n('No smp-server.ini'))
   }
   const fileIni = await fileServerIni.read().const(effects)
   if (!fileIni) {
-    throw new Error('No file-server.ini')
+    throw new Error(i18n('No file-server.ini'))
   }
 
   /**
@@ -40,11 +41,11 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: sdk.useEntrypoint(),
       },
       ready: {
-        display: 'SMP Server',
+        display: i18n('SMP Server'),
         fn: () =>
           sdk.healthCheck.checkPortListening(effects, smpPort, {
-            successMessage: 'The SMP server is ready',
-            errorMessage: 'The SMP server is not ready',
+            successMessage: i18n('The SMP server is ready'),
+            errorMessage: i18n('The SMP server is not ready'),
           }),
       },
       requires: [],
@@ -60,11 +61,11 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: sdk.useEntrypoint(),
       },
       ready: {
-        display: 'XFTP Server',
+        display: i18n('XFTP Server'),
         fn: () =>
           sdk.healthCheck.checkPortListening(effects, xftpPort, {
-            successMessage: 'The XFTP server is ready',
-            errorMessage: 'The XFTP server is not ready',
+            successMessage: i18n('The XFTP server is ready'),
+            errorMessage: i18n('The XFTP server is not ready'),
           }),
       },
       requires: [],

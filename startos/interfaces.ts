@@ -2,6 +2,7 @@ import { FileHelper } from '@start9labs/start-sdk'
 import { sdk } from './sdk'
 import { smpPort, webPort, xftpPort } from './utils'
 import { smpServerIni } from './fileModels/smpServer.ini'
+import { i18n } from './i18n'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   // get fingerprints
@@ -35,9 +36,9 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     secure: { ssl: true },
   })
   const smp = sdk.createInterface(effects, {
-    name: 'SMP Server',
+    name: i18n('SMP Server'),
     id: 'smp',
-    description: 'The SMP server for SimpleX',
+    description: i18n('The SMP server for SimpleX'),
     type: 'api',
     masked: true,
     schemeOverride: { ssl: 'smp', noSsl: 'smp' },
@@ -56,9 +57,9 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     secure: { ssl: true },
   })
   const xftp = sdk.createInterface(effects, {
-    name: 'XFTP Server',
+    name: i18n('XFTP Server'),
     id: 'xftp',
-    description: 'The XFTP server for SimpleX',
+    description: i18n('The XFTP server for SimpleX'),
     type: 'api',
     masked: true,
     schemeOverride: { ssl: 'xftp', noSsl: 'xftp' },

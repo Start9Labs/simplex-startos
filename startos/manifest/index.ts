@@ -1,4 +1,5 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import i18n from './i18n'
 
 export const manifest = setupManifest({
   id: 'simplex',
@@ -12,10 +13,7 @@ export const manifest = setupManifest({
     'https://github.com/Start9Labs/simplex-startos/blob/update/040/docs/instructions.md',
   donationUrl:
     'https://github.com/simplex-chat/simplex-chat#help-us-with-donations',
-  description: {
-    short: 'Freedom & security of your communications',
-    long: 'An open-source, decentralized messenger designed for maximum privacy and control.',
-  },
+  description: i18n.description,
   volumes: [
     'smp-configs',
     'smp-state',
@@ -30,13 +28,15 @@ export const manifest = setupManifest({
   images: {
     smp: {
       source: {
-        dockerTag: 'simplexchat/smp-server:v6.4.5',
+        dockerTag: 'simplexchat/smp-server:v7.0.0',
       },
+      arch: ['x86_64', 'aarch64'],
     },
     xftp: {
       source: {
-        dockerTag: 'simplexchat/xftp-server:v6.4.5',
+        dockerTag: 'simplexchat/xftp-server:v7.0.0',
       },
+      arch: ['x86_64', 'aarch64'],
     },
   },
   dependencies: {},

@@ -8,9 +8,15 @@ import { join } from 'path'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_4_5_0_a0 = VersionInfo.of({
-  version: '6.4.5:0-alpha.0',
-  releaseNotes: 'Updated for StartOS 0.4.0',
+export const v_7_0_0_0_b0 = VersionInfo.of({
+  version: '7.0.0:0-beta.0',
+  releaseNotes: {
+    en_US: 'Updated for StartOS 0.4.0',
+    es_ES: 'Actualizado para StartOS 0.4.0',
+    de_DE: 'Aktualisiert für StartOS 0.4.0',
+    pl_PL: 'Zaktualizowano dla StartOS 0.4.0',
+    fr_FR: 'Mis à jour pour StartOS 0.4.0',
+  },
   migrations: {
     up: async ({ effects }) => {
       // get old stats.yaml
