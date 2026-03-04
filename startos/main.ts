@@ -1,8 +1,8 @@
 import { fileServerIni } from './fileModels/fileServer.ini'
 import { smpServerIni } from './fileModels/smpServer.ini'
+import { i18n } from './i18n'
 import { sdk } from './sdk'
 import { smpMounts, smpPort, xftpMounts, xftpPort } from './utils'
-import { i18n } from './i18n'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
