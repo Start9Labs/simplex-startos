@@ -8,7 +8,7 @@ export const manifest = setupManifest({
   packageRepo: 'https://github.com/Start9Labs/simplex-startos/tree/update/040',
   upstreamRepo: 'https://github.com/simplex-chat/simplexmq/',
   marketingUrl: 'https://simplex.chat/',
-  docsUrls: ['https://simplex.chat/docs/'],
+  docsUrls: ['https://simplex.chat/docs/guide/readme.html'],
   donationUrl:
     'https://github.com/simplex-chat/simplex-chat#help-us-with-donations',
   description: i18n.description,
