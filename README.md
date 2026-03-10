@@ -6,7 +6,7 @@
 
 This repository packages [SimpleX](https://github.com/simplex-chat/simplexmq) for StartOS. This document describes what makes this package different from a default SimpleX deployment.
 
-For general SimpleX usage and features, see the [upstream documentation](https://simplex.chat/docs/).
+For general SimpleX usage and features, see the [upstream documentation](https://simplex.chat/docs/guide/readme.html).
 
 ## How This Differs from Upstream
 
