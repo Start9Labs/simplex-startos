@@ -1,15 +1,15 @@
-import { VersionInfo, IMPOSSIBLE, YAML, utils } from '@start9labs/start-sdk'
+import { IMPOSSIBLE, utils, VersionInfo, YAML } from '@start9labs/start-sdk'
 import { execFile } from 'child_process'
 import { readdir, readFile, rm } from 'fs/promises'
+import { join } from 'path'
+import { fileServerIni } from '../../fileModels/fileServer.ini'
 import { smpServerIni } from '../../fileModels/smpServer.ini'
 import { smpConfigDefaults, xftpConfigDefaults } from '../../utils'
-import { fileServerIni } from '../../fileModels/fileServer.ini'
-import { join } from 'path'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_4_5_2_b0 = VersionInfo.of({
-  version: '6.4.5:2-beta.0',
+export const v_6_4_5_3_b0 = VersionInfo.of({
+  version: '6.4.5:3-beta.0',
   releaseNotes: {
     en_US: 'Update to StartOS SDK beta.59',
     es_ES: 'Actualización a StartOS SDK beta.59',
