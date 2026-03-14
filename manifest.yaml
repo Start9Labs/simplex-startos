@@ -1,11 +1,16 @@
 id: simplex
 title: "SimpleX Server"
-version: 6.2.0.7
+version: 6.4.5.1
 release-notes: |
-  - Updated to the latest upstream code with notable changes:
-    * journal storage for messages (BETA).
-    * prevent race condition when deleting queue and to avoid "orphan" messages.
-    * Full change log available [here](https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md#620)
+  - Updated simplexmq from 6.2.0 to 6.4.5 with notable changes:
+    * PostgreSQL support for queue records (for high-traffic servers)
+    * Prometheus metrics for SMP and XFTP servers
+    * Short connection links support
+    * Store log enabled by default
+    * Content moderation blocking records
+    * Multiple memory leak fixes
+    * Stability and reliability improvements
+    * Full change log available [here](https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md)
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/simplex-startos"
 upstream-repo: "https://github.com/simplex-chat/simplexmq/"
