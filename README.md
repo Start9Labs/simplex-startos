@@ -18,10 +18,10 @@ This package runs **2 containers**:
 
 | Container | Image | Purpose |
 |-----------|-------|---------|
-| smp | `simplexchat/smp-server:v6.4.5` | SimpleX Messaging Protocol server |
-| xftp | `simplexchat/xftp-server:v6.4.5` | SimpleX File Transfer Protocol server |
+| smp | `simplexchat/smp-server` | SimpleX Messaging Protocol server |
+| xftp | `simplexchat/xftp-server` | SimpleX File Transfer Protocol server |
 
-**Note:** Currently x86_64 only. ARM64 support coming after v6.4.5.
+**Note:** Currently x86_64 only. ARM64 support planned for a future release.
 
 ## Volumes
 
@@ -120,7 +120,7 @@ Your messages and files will now route through your own servers.
 
 ## Limitations
 
-1. **x86_64 only**: ARM64 (aarch64) not yet supported in this version
+1. **x86_64 only**: ARM64 (aarch64) not yet supported
 2. **No web UI**: Server administration is config-file only
 3. **Fixed storage quota**: XFTP limited to 10GB (requires config edit to change)
 4. **No stats dashboard**: Prometheus metrics available but not exposed
@@ -139,15 +139,14 @@ Your messages and files will now route through your own servers.
 
 ```yaml
 package_id: simplex
-upstream_version: 6.4.5
 arch: x86_64 only
 
 containers:
   - name: smp
-    image: simplexchat/smp-server:v6.4.5
+    image: simplexchat/smp-server
     ports: [5223, 5224]
   - name: xftp
-    image: simplexchat/xftp-server:v6.4.5
+    image: simplexchat/xftp-server
     ports: [5225, 5226]
 
 volumes:
