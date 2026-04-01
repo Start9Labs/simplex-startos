@@ -1,3 +1,0 @@
-[submodule "simplexmq"]
-	path = simplexmq
-	url = https://github.com/simplex-chat/simplexmq.git
