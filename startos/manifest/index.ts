@@ -5,7 +5,7 @@ export const manifest = setupManifest({
   id: 'simplex',
   title: 'SimpleX Server',
   license: 'MIT',
-  packageRepo: 'https://github.com/Start9Labs/simplex-startos/tree/update/040',
+  packageRepo: 'https://github.com/Start9Labs/simplex-startos',
   upstreamRepo: 'https://github.com/simplex-chat/simplexmq/',
   marketingUrl: 'https://simplex.chat/',
   donationUrl:

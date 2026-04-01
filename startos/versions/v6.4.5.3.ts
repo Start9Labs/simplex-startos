@@ -8,8 +8,8 @@ import { smpConfigDefaults, xftpConfigDefaults } from '../utils'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_4_5_3_b4 = VersionInfo.of({
-  version: '6.4.5:3-beta.4',
+export const v_6_4_5_3 = VersionInfo.of({
+  version: '6.4.5:3',
   releaseNotes: {
     en_US: 'Update to StartOS SDK beta.60',
     es_ES: 'Actualización a StartOS SDK beta.60',
