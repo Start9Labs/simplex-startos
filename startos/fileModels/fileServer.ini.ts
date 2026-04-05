@@ -1,6 +1,7 @@
 import { FileHelper, z } from '@start9labs/start-sdk'
-import { xftpConfigDefaults } from '../utils'
+import * as INI from './ini-lib'
 import { sdk } from '../sdk'
+import { xftpConfigDefaults } from '../utils'
 
 const { STORE_LOG, AUTH, TRANSPORT, FILES, INACTIVE_CLIENTS } =
   xftpConfigDefaults
@@ -70,10 +71,12 @@ const shape = z.object({
 
 export type FileServerConfig = z.infer<typeof shape>
 
-export const fileServerIni = FileHelper.ini(
+export const fileServerIni = FileHelper.raw<FileServerConfig>(
   {
     base: sdk.volumes['xftp-configs'],
     subpath: './file-server.ini',
   },
-  shape,
+  (inData) => INI.stringify(inData),
+  (inString) => INI.parse(inString),
+  (data) => shape.parse(data),
 )

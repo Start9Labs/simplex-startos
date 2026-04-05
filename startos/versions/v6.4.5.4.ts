@@ -8,14 +8,14 @@ import { smpConfigDefaults, xftpConfigDefaults } from '../utils'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_4_5_3 = VersionInfo.of({
-  version: '6.4.5:3',
+export const v_6_4_5_4 = VersionInfo.of({
+  version: '6.4.5:4',
   releaseNotes: {
-    en_US: 'Update to StartOS SDK beta.60',
-    es_ES: 'Actualización a StartOS SDK beta.60',
-    de_DE: 'Update auf StartOS SDK beta.60',
-    pl_PL: 'Aktualizacja do StartOS SDK beta.60',
-    fr_FR: 'Mise à jour vers StartOS SDK beta.60',
+    en_US: 'Update to StartOS SDK 1.0.0. Fix XFTP server failing to start due to config file corruption.',
+    es_ES: 'Actualización a StartOS SDK 1.0.0. Corrección del servidor XFTP que no iniciaba debido a corrupción del archivo de configuración.',
+    de_DE: 'Update auf StartOS SDK 1.0.0. Behebung des XFTP-Serverstartfehlers durch beschädigte Konfigurationsdatei.',
+    pl_PL: 'Aktualizacja do StartOS SDK 1.0.0. Naprawiono błąd uruchamiania serwera XFTP spowodowany uszkodzeniem pliku konfiguracyjnego.',
+    fr_FR: 'Mise à jour vers StartOS SDK 1.0.0. Correction du serveur XFTP qui ne démarrait pas en raison de la corruption du fichier de configuration.',
   },
   migrations: {
     up: async ({ effects }) => {
