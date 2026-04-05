@@ -98,9 +98,9 @@ const webSchema = z.object({
     .optional()
     .catch(WEB.static_path),
   http: z.literal(WEB.http).catch(WEB.http),
-  https: z.any().optional().catch(undefined),
-  cert: z.any().optional().catch(undefined),
-  key: z.any().optional().catch(undefined),
+  https: z.undefined().catch(undefined),
+  cert: z.undefined().catch(undefined),
+  key: z.undefined().catch(undefined),
 })
 
 const shape = z.object({
