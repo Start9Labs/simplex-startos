@@ -1,67 +1,28 @@
 import { FileHelper, z } from '@start9labs/start-sdk'
-import * as INI from './ini-lib'
 import { sdk } from '../sdk'
-import { xftpConfigDefaults } from '../utils'
-
-const { STORE_LOG, AUTH, TRANSPORT, FILES, INACTIVE_CLIENTS } =
-  xftpConfigDefaults
-
-const storeLogSchema = z.object({
-  enable: z.enum(['on', 'off']).catch(STORE_LOG.enable),
-  expire_files_hours: z
-    .number()
-    .int()
-    .nonnegative()
-    .optional()
-    .catch(STORE_LOG.expire_files_hours),
-  log_stats: z.enum(['on', 'off']).catch(STORE_LOG.log_stats),
-  prometheus_interval: z
-    .number()
-    .int()
-    .nonnegative()
-    .optional()
-    .catch(STORE_LOG.prometheus_interval),
-})
+import { xftpFilePath, xftpPort, xftpStorageQuota } from '../utils'
+import * as INI from './ini-lib'
 
 const authSchema = z.object({
-  new_files: z.enum(['on', 'off']).catch(AUTH.new_files),
-  create_password: z.string().catch(''),
-  control_port_admin_password: z
-    .string()
-    .optional()
-    .catch(AUTH.control_port_admin_password),
-  control_port_user_password: z
-    .string()
-    .optional()
-    .catch(AUTH.control_port_user_password),
+  create_password: z.string(),
 })
 
 const transportSchema = z.object({
-  host: z.string().catch(TRANSPORT.host),
-  port: z.literal(TRANSPORT.port).catch(TRANSPORT.port),
-  log_tls_errors: z.enum(['on', 'off']).catch(TRANSPORT.log_tls_errors),
-  control_port: z
-    .number()
-    .int()
-    .nonnegative()
-    .optional()
-    .catch(TRANSPORT.control_port),
+  host: z.literal('<hostnames>').catch('<hostnames>'),
+  port: z.literal(xftpPort).catch(xftpPort),
 })
 
 const filesSchema = z.object({
-  path: z.literal(FILES.path).catch(FILES.path),
-  storage_quota: z.string().catch(FILES.storage_quota),
+  path: z.literal(xftpFilePath).catch(xftpFilePath),
+  storage_quota: z.string().catch(xftpStorageQuota),
 })
 
 const inactiveClientsSchema = z.object({
-  disconnect: z
-    .literal(INACTIVE_CLIENTS.disconnect)
-    .catch(INACTIVE_CLIENTS.disconnect),
+  disconnect: z.literal('off').catch('off'),
 })
 
 const shape = z.object({
-  STORE_LOG: storeLogSchema.catch(() => storeLogSchema.parse({})),
-  AUTH: authSchema.catch(() => authSchema.parse({})),
+  AUTH: authSchema,
   TRANSPORT: transportSchema.catch(() => transportSchema.parse({})),
   FILES: filesSchema.catch(() => filesSchema.parse({})),
   INACTIVE_CLIENTS: inactiveClientsSchema.catch(() =>

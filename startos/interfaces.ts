@@ -71,7 +71,20 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
 
   const receipts = [smpReceipt, xftpReceipt]
 
-  // @TODO consider implementing optional web info page
+  // @TODO consider implementing optional web info page.
+  //
+  // smp-server can serve a read-only HTML info page (QR codes, server
+  // address, stats) when [WEB] is configured. To enable:
+  //   1. Add [WEB] fields to smpServerIni schema (at minimum: `static_path`
+  //      pointing at ${smpStatePath}/www, and `http: webPort`). StartOS
+  //      terminates TLS, so set `https`/`cert`/`key` to undefined.
+  //   2. Ensure smp-server has generated the static site — either passing
+  //      extra flags at `smp-server init` time or running a post-init step
+  //      that populates ${smpStatePath}/www.
+  //   3. Gate on user preference (e.g. a store.json flag toggled via
+  //      action) so users who don't want a public info page can opt out.
+  //   4. Uncomment the block below; webPort is already exported from utils.
+  //
   // if (store.enableWeb) {
   //   const infoMultiOrigin = await smpMulti.bindPort(webPort, {
   //     protocol: 'http',

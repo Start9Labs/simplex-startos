@@ -51,10 +51,12 @@ This package runs **2 containers**:
 | Volume | Mount Point | Container | Contents |
 |--------|-------------|-----------|----------|
 | `smp-configs` | `/etc/opt/simplex` | smp | SMP server configuration, TLS keys, fingerprint |
-| `smp-state` | `/var/opt/simplex` | smp | SMP message queues and state |
+| `smp-state` | `/var/opt/simplex` | smp | SMP message queues, server state, and `store.json` (StartOS-managed action state) |
 | `xftp-configs` | `/etc/opt/simplex-xftp` | xftp | XFTP server configuration, TLS keys, fingerprint |
 | `xftp-state` | `/var/opt/simplex-xftp` | xftp | XFTP file metadata and state |
 | `xftp-files` | `/srv/xftp` | xftp | Uploaded file storage |
+
+`store.json` is a StartOS-only file (never read by smp-server) that records action-driven toggles — currently just `enableTorProxy: boolean`.
 
 ## Installation and First-Run Flow
 
@@ -70,17 +72,17 @@ On update/restore, existing configuration files are merged with defaults (preser
 
 ## Configuration Management
 
-| StartOS-Managed (auto-configured) | Upstream-Managed |
+| StartOS-Managed (enforced) | Upstream-Managed (pass-through) |
 |------------------------------------|------------------|
-| SMP port (5223, 443), control port (5224) | N/A — no user-facing config UI |
-| XFTP port (5225), control port (5226) | Advanced users can edit INI files directly in config volumes |
-| Message expiry (365 days), notification expiry (168 hours) | |
-| File expiry (168 hours), storage quota (10 GB) | |
-| Store queues/messages in memory, restore messages on start | |
-| Shared authentication password (auto-generated) | |
-| SOCKS proxy (`127.0.0.1:9050`), client concurrency (32) | |
+| `TRANSPORT.host: <hostnames>`, `TRANSPORT.port: 5223,443` (smp) / `5225` (xftp) | Control ports, stats/prometheus, log levels |
+| `STORE_LOG.enable: on`, `expire_messages_days: 365`, `expire_messages_on_start: off`, `expire_ntfs_hours: 168` (smp) | Any other key not listed here |
+| `FILES.path`, `FILES.storage_quota: 10gb` (xftp) | |
+| `AUTH.create_password` (auto-generated 21-char) | |
+| `INACTIVE_CLIENTS.disconnect: off` (both) | |
+| `WEB.static_path`, `WEB.http: 8000`; `WEB.https`/`cert`/`key` stripped — StartOS terminates TLS | |
+| `PROXY.socks_proxy` — written/stripped by the **Tor Settings** action | |
 
-No configuration actions are provided. All settings are managed via INI file models with defaults applied at install time.
+StartOS INI schemas only constrain the fields above. Unknown keys are preserved by `merge()`, so advanced users may edit the INI files directly in the config volumes to set anything else (control ports, inactive-client timeouts, stats/prometheus, etc.) and those values will survive StartOS rewrites.
 
 ## Network Access and Interfaces
 
@@ -98,7 +100,11 @@ xftp://<fingerprint>:<password>@<hostname>:5225
 
 ## Actions (StartOS UI)
 
-None. Server configuration is automatic.
+| Action | ID | Purpose | Inputs | Availability |
+|--------|----|---------|--------|--------------|
+| Tor Settings | `tor-settings` | Configure whether this SMP server forwards messages to `.onion` destination servers via Tor. | `enableTorProxy: boolean` (default `false`) — when on, adds a running dependency on the Tor service and writes its container IP to `[PROXY] socks_proxy` in `smp-server.ini`; when off, strips that setting and drops the Tor dependency. | Any status |
+
+The form is prepopulated from `enableTorProxy` in `store.json`; submissions merge the new value back.
 
 ## Backups and Restore
 
@@ -119,7 +125,11 @@ Both daemons start independently (no ordering dependency).
 
 ## Dependencies
 
-None.
+| Service | Required? | Version | Health Checks | Purpose |
+|---------|-----------|---------|---------------|---------|
+| `tor` | Optional — only active when `enableTorProxy` is on in the **Tor Settings** action | `>=0.4.9.5:0` | none | Provides the SOCKS5 endpoint that smp-server uses to forward messages to `.onion` destination servers. |
+
+When `enableTorProxy` is off (default), the package has no runtime dependencies.
 
 ## Limitations and Differences
 
@@ -127,7 +137,8 @@ None.
 2. **No web UI** — server administration is config-file only
 3. **Fixed storage quota** — XFTP is limited to 10 GB (requires direct INI file edit to change)
 4. **No stats dashboard** — Prometheus metrics interval is not configured by default
-5. **No configuration action** — all settings are baked in at install time; changes require editing INI files in the config volumes
+5. **TLS is not served by smp-server** — StartOS terminates TLS for the web info page, so `WEB.https`/`cert`/`key` are stripped from `smp-server.ini` on every merge; Let's Encrypt / direct HTTPS configuration on the smp-server side is disabled by design
+6. **Tor SOCKS proxy is opt-in only** — the `[PROXY] socks_proxy` setting is toggled solely by the `tor-settings` action; hand-edits to that field will be overwritten on the next init run
 
 ## What Is Unchanged from Upstream
 
@@ -158,7 +169,14 @@ volumes:
 ports:
   smp: 5223
   xftp: 5225
-dependencies: none
+dependencies:
+  tor:
+    required: false
+    version: ">=0.4.9.5:0"
+    activated_by: tor-settings action (enableTorProxy=true)
 startos_managed_env_vars: []
-actions: []
+actions:
+  - tor-settings
+startos_managed_files:
+  - smp-state/store.json
 ```

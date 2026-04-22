@@ -1,13 +1,13 @@
 import { utils } from '@start9labs/start-sdk'
+import { fileServerIni } from '../fileModels/fileServer.ini'
+import { smpServerIni } from '../fileModels/smpServer.ini'
 import { sdk } from '../sdk'
 import {
   smpMounts,
-  xftpConfigDefaults,
   xftpFilePath,
   xftpMounts,
+  xftpStorageQuota,
 } from '../utils'
-import { smpServerIni } from '../fileModels/smpServer.ini'
-import { fileServerIni } from '../fileModels/fileServer.ini'
 
 export const initServers = sdk.setupOnInit(async (effects, kind) => {
   if (kind === 'install') {
@@ -30,12 +30,12 @@ export const initServers = sdk.setupOnInit(async (effects, kind) => {
           '--password',
           create_password,
         ])
-
-        await smpServerIni.merge(effects, {
-          AUTH: { create_password },
-        })
       },
     )
+
+    await smpServerIni.merge(effects, {
+      AUTH: { create_password },
+    })
 
     await sdk.SubContainer.withTemp(
       effects,
@@ -49,14 +49,14 @@ export const initServers = sdk.setupOnInit(async (effects, kind) => {
           '-p',
           xftpFilePath,
           '-q',
-          xftpConfigDefaults.FILES.storage_quota,
+          xftpStorageQuota,
         ])
-
-        await fileServerIni.merge(effects, {
-          AUTH: { create_password },
-        })
       },
     )
+
+    await fileServerIni.merge(effects, {
+      AUTH: { create_password },
+    })
   } else {
     await smpServerIni.merge(effects, {})
     await fileServerIni.merge(effects, {})

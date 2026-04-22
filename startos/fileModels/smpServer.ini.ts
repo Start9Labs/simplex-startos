@@ -1,112 +1,43 @@
 import { FileHelper, z } from '@start9labs/start-sdk'
-import { smpConfigDefaults, smpStatePath } from '../utils'
+import { smpPort, smpStatePath, webPort } from '../utils'
 import * as INI from './ini-lib'
 import { sdk } from '../sdk'
 
-const {
-  INFORMATION,
-  STORE_LOG,
-  AUTH,
-  TRANSPORT,
-  PROXY,
-  INACTIVE_CLIENTS,
-  WEB,
-} = smpConfigDefaults
-
-const informationSchema = z.object({
-  source_code: z
-    .literal(INFORMATION.source_code)
-    .catch(INFORMATION.source_code),
-})
-
 const storeLogSchema = z.object({
-  enable: z.enum(['on', 'off']).catch(STORE_LOG.enable),
-  store_queues: z
-    .literal(STORE_LOG.store_queues)
-    .catch(STORE_LOG.store_queues),
-  store_messages: z
-    .literal(STORE_LOG.store_messages)
-    .catch(STORE_LOG.store_messages),
-  restore_messages: z.enum(['on', 'off']).catch(STORE_LOG.restore_messages),
-  expire_messages_days: z
-    .number()
-    .int()
-    .nonnegative()
-    .optional()
-    .catch(STORE_LOG.expire_messages_days),
-  expire_messages_on_start: z
-    .literal(STORE_LOG.expire_messages_on_start)
-    .catch(STORE_LOG.expire_messages_on_start),
-  expire_ntfs_hours: z
-    .number()
-    .int()
-    .nonnegative()
-    .optional()
-    .catch(STORE_LOG.expire_ntfs_hours),
-  log_stats: z.enum(['on', 'off']).catch(STORE_LOG.log_stats),
-  prometheus_interval: z
-    .number()
-    .int()
-    .nonnegative()
-    .optional()
-    .catch(STORE_LOG.prometheus_interval),
+  enable: z.literal('on').catch('on'),
+  expire_messages_days: z.literal(365).catch(365),
+  expire_messages_on_start: z.literal('off').catch('off'),
+  expire_ntfs_hours: z.literal(168).catch(168),
 })
 
 const authSchema = z.object({
-  new_queues: z.literal(AUTH.new_queues).catch(AUTH.new_queues),
-  create_password: z.string().catch(''),
-  control_port_admin_password: z
-    .string()
-    .optional()
-    .catch(AUTH.control_port_admin_password),
-  control_port_user_password: z
-    .string()
-    .optional()
-    .catch(AUTH.control_port_user_password),
+  create_password: z.string(),
 })
 
 const transportSchema = z.object({
-  host: z.string().catch(TRANSPORT.host),
-  port: z.literal(TRANSPORT.port).catch(TRANSPORT.port),
-  log_tls_errors: z
-    .literal(TRANSPORT.log_tls_errors)
-    .catch(TRANSPORT.log_tls_errors),
-  websockets: z.literal(TRANSPORT.websockets).catch(TRANSPORT.websockets),
-  control_port: z
-    .literal(TRANSPORT.control_port)
-    .catch(TRANSPORT.control_port),
+  host: z.literal('<hostnames>').catch('<hostnames>'),
+  port: z.literal(`${smpPort},443`).catch(`${smpPort},443`),
 })
 
 const proxySchema = z.object({
-  socks_proxy: z.literal(PROXY.socks_proxy).catch(PROXY.socks_proxy),
-  client_concurrency: z
-    .number()
-    .int()
-    .nonnegative()
-    .catch(PROXY.client_concurrency),
+  socks_proxy: z.string().optional().catch(undefined),
 })
 
 const inactiveClientsSchema = z.object({
-  disconnect: z
-    .literal(INACTIVE_CLIENTS.disconnect)
-    .catch(INACTIVE_CLIENTS.disconnect),
+  disconnect: z.literal('off').catch('off'),
 })
 
 const webSchema = z.object({
-  static_path: z
-    .literal(`${smpStatePath}/www`)
-    .optional()
-    .catch(WEB.static_path),
-  http: z.literal(WEB.http).catch(WEB.http),
+  static_path: z.literal(`${smpStatePath}/www`).catch(`${smpStatePath}/www`),
+  http: z.literal(webPort).catch(webPort),
   https: z.undefined().catch(undefined),
   cert: z.undefined().catch(undefined),
   key: z.undefined().catch(undefined),
 })
 
 const shape = z.object({
-  INFORMATION: informationSchema.catch(() => informationSchema.parse({})),
   STORE_LOG: storeLogSchema.catch(() => storeLogSchema.parse({})),
-  AUTH: authSchema.catch(() => authSchema.parse({})),
+  AUTH: authSchema,
   TRANSPORT: transportSchema.catch(() => transportSchema.parse({})),
   PROXY: proxySchema.catch(() => proxySchema.parse({})),
   INACTIVE_CLIENTS: inactiveClientsSchema.catch(() =>

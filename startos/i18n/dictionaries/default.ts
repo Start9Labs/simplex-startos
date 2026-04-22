@@ -12,6 +12,10 @@ const dict = {
   'The XFTP server is not ready': 8,
   'The SMP server for SimpleX': 9,
   'The XFTP server for SimpleX': 10,
+  'Enable Tor SOCKS Proxy': 11,
+  'Tor Settings': 12,
+  'SimpleX clients use private routing (2-hop onion routing) by asking an SMP server to forward messages to the recipient’s server; if a recipient’s server is reachable only on Tor, the forwarding server must have a Tor SOCKS proxy to reach it. Enabling this adds a running dependency on the Tor service and writes it to [PROXY] socks_proxy in smp-server.ini.': 13,
+  'Configure whether this SMP server forwards messages to .onion destination servers via Tor.': 14,
 } as const
 
 export type I18nKey = keyof typeof dict

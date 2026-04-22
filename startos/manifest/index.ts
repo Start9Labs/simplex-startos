@@ -39,5 +39,14 @@ export const manifest = setupManifest({
       arch: ['x86_64'],
     },
   },
-  dependencies: {},
+  dependencies: {
+    tor: {
+      description: i18n.torDescription,
+      optional: true,
+      metadata: {
+        title: 'Tor',
+        icon: 'https://raw.githubusercontent.com/Start9Labs/tor-startos/65faea17febc739d910e8c26ff4e61f6333487a8/icon.svg',
+      },
+    },
+  },
 })

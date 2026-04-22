@@ -4,18 +4,22 @@ import { readdir, readFile, rm } from 'fs/promises'
 import { join } from 'path'
 import { fileServerIni } from '../fileModels/fileServer.ini'
 import { smpServerIni } from '../fileModels/smpServer.ini'
-import { smpConfigDefaults, xftpConfigDefaults } from '../utils'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_4_5_4 = VersionInfo.of({
-  version: '6.4.5:4',
+export const v_6_4_5_5 = VersionInfo.of({
+  version: '6.4.5:5',
   releaseNotes: {
-    en_US: 'Update to StartOS SDK 1.0.0. Fix XFTP server failing to start due to config file corruption.',
-    es_ES: 'Actualización a StartOS SDK 1.0.0. Corrección del servidor XFTP que no iniciaba debido a corrupción del archivo de configuración.',
-    de_DE: 'Update auf StartOS SDK 1.0.0. Behebung des XFTP-Serverstartfehlers durch beschädigte Konfigurationsdatei.',
-    pl_PL: 'Aktualizacja do StartOS SDK 1.0.0. Naprawiono błąd uruchamiania serwera XFTP spowodowany uszkodzeniem pliku konfiguracyjnego.',
-    fr_FR: 'Mise à jour vers StartOS SDK 1.0.0. Correction du serveur XFTP qui ne démarrait pas en raison de la corruption du fichier de configuration.',
+    en_US:
+      'Update to StartOS SDK 1.0.0. Fix XFTP server failing to start due to config file corruption.',
+    es_ES:
+      'Actualización a StartOS SDK 1.0.0. Corrección del servidor XFTP que no iniciaba debido a corrupción del archivo de configuración.',
+    de_DE:
+      'Update auf StartOS SDK 1.0.0. Behebung des XFTP-Serverstartfehlers durch beschädigte Konfigurationsdatei.',
+    pl_PL:
+      'Aktualizacja do StartOS SDK 1.0.0. Naprawiono błąd uruchamiania serwera XFTP spowodowany uszkodzeniem pliku konfiguracyjnego.',
+    fr_FR:
+      'Mise à jour vers StartOS SDK 1.0.0. Correction du serveur XFTP qui ne démarrait pas en raison de la corruption du fichier de configuration.',
   },
   migrations: {
     up: async ({ effects }) => {
@@ -94,16 +98,14 @@ export const v_6_4_5_4 = VersionInfo.of({
             len: 21,
           })
 
-        // overwrite smp-server.ini
-        await smpServerIni.write(effects, {
-          ...smpConfigDefaults,
-          AUTH: { ...smpConfigDefaults.AUTH, create_password },
+        // seed smp-server.ini (zod schema handles all other defaults)
+        await smpServerIni.merge(effects, {
+          AUTH: { create_password },
         })
 
-        // overwrite file-server.ini
-        await fileServerIni.write(effects, {
-          ...xftpConfigDefaults,
-          AUTH: { ...xftpConfigDefaults.AUTH, create_password },
+        // seed file-server.ini (zod schema handles all other defaults)
+        await fileServerIni.merge(effects, {
+          AUTH: { create_password },
         })
         // remove everything from old volumes
         await Promise.all(

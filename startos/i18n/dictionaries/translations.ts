@@ -13,6 +13,10 @@ export default {
     8: 'El servidor XFTP no está listo',
     9: 'El servidor SMP de SimpleX',
     10: 'El servidor XFTP de SimpleX',
+    11: 'Habilitar proxy SOCKS de Tor',
+    12: 'Configuración de Tor',
+    13: 'Los clientes de SimpleX usan enrutamiento privado (2 saltos tipo cebolla) pidiendo a un servidor SMP que reenvíe mensajes al servidor del destinatario; si el servidor del destinatario solo es accesible por Tor, el servidor de reenvío debe tener un proxy SOCKS de Tor para alcanzarlo. Al habilitarlo se añade una dependencia en ejecución del servicio Tor y se escribe en [PROXY] socks_proxy en smp-server.ini.',
+    14: 'Configura si este servidor SMP reenvía mensajes a servidores de destino .onion a través de Tor.',
   },
   de_DE: {
     0: 'SimpleX wird gestartet!',
@@ -26,6 +30,10 @@ export default {
     8: 'Der XFTP-Server ist nicht bereit',
     9: 'Der SMP-Server für SimpleX',
     10: 'Der XFTP-Server für SimpleX',
+    11: 'Tor-SOCKS-Proxy aktivieren',
+    12: 'Tor-Einstellungen',
+    13: 'SimpleX-Clients verwenden Private Routing (2-Hop-Onion-Routing), indem sie einen SMP-Server bitten, Nachrichten an den Server des Empfängers weiterzuleiten; wenn der Server des Empfängers nur über Tor erreichbar ist, muss der weiterleitende Server über einen Tor-SOCKS-Proxy verfügen. Durch Aktivieren wird eine laufende Abhängigkeit vom Tor-Dienst hinzugefügt und in [PROXY] socks_proxy in der smp-server.ini geschrieben.',
+    14: 'Legt fest, ob dieser SMP-Server Nachrichten an .onion-Zielserver über Tor weiterleitet.',
   },
   pl_PL: {
     0: 'Uruchamianie SimpleX!',
@@ -39,6 +47,10 @@ export default {
     8: 'Serwer XFTP nie jest gotowy',
     9: 'Serwer SMP dla SimpleX',
     10: 'Serwer XFTP dla SimpleX',
+    11: 'Włącz proxy SOCKS Tora',
+    12: 'Ustawienia Tora',
+    13: 'Klienci SimpleX używają prywatnego routingu (2-skokowego routingu cebulowego), prosząc serwer SMP o przekazanie wiadomości do serwera odbiorcy; jeśli serwer odbiorcy jest osiągalny tylko przez Tora, serwer przekazujący musi mieć proxy SOCKS Tora, aby go osiągnąć. Włączenie dodaje zależność działającą od usługi Tor i zapisuje go w [PROXY] socks_proxy w pliku smp-server.ini.',
+    14: 'Konfiguruje, czy ten serwer SMP przekazuje wiadomości do serwerów docelowych .onion przez Tora.',
   },
   fr_FR: {
     0: 'Démarrage de SimpleX !',
@@ -52,5 +64,9 @@ export default {
     8: 'Le serveur XFTP n\'est pas prêt',
     9: 'Le serveur SMP de SimpleX',
     10: 'Le serveur XFTP de SimpleX',
+    11: 'Activer le proxy SOCKS Tor',
+    12: 'Paramètres Tor',
+    13: 'Les clients SimpleX utilisent le routage privé (routage oignon à 2 sauts) en demandant à un serveur SMP de transférer les messages vers le serveur du destinataire ; si le serveur du destinataire n\'est accessible que via Tor, le serveur de transfert doit disposer d\'un proxy SOCKS Tor pour l\'atteindre. L\'activation ajoute une dépendance en cours d\'exécution sur le service Tor et l\'écrit dans [PROXY] socks_proxy dans smp-server.ini.',
+    14: 'Configure si ce serveur SMP transfère les messages vers des serveurs de destination .onion via Tor.',
   },
 } satisfies Record<string, LangDict>
