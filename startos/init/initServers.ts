@@ -2,12 +2,7 @@ import { utils } from '@start9labs/start-sdk'
 import { fileServerIni } from '../fileModels/fileServer.ini'
 import { smpServerIni } from '../fileModels/smpServer.ini'
 import { sdk } from '../sdk'
-import {
-  smpMounts,
-  xftpFilePath,
-  xftpMounts,
-  xftpStorageQuota,
-} from '../utils'
+import { smpMounts, xftpFilePath, xftpMounts, xftpStorageQuota } from '../utils'
 
 export const initServers = sdk.setupOnInit(async (effects, kind) => {
   if (kind === 'install') {
@@ -59,6 +54,14 @@ export const initServers = sdk.setupOnInit(async (effects, kind) => {
     })
   } else {
     await smpServerIni.merge(effects, {})
-    await fileServerIni.merge(effects, {})
+    const create_password = await smpServerIni
+      .read((s) => s.AUTH.create_password)
+      .once()
+    if (!create_password) {
+      throw new Error('No smp-server.ini create_password')
+    }
+    await fileServerIni.merge(effects, {
+      AUTH: { create_password },
+    })
   }
 })
