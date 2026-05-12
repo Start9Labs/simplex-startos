@@ -10,7 +10,6 @@ export const manifest = setupManifest({
   marketingUrl: 'https://simplex.chat/',
   donationUrl:
     'https://github.com/simplex-chat/simplex-chat#help-us-with-donations',
-  docsUrls: ['https://github.com/simplex-chat/simplex-chat/tree/stable/docs'],
   description: i18n.description,
   volumes: [
     'smp-configs',

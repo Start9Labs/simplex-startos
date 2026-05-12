@@ -1,5 +1,3 @@
-## How the upstream version is pulled
-- dockerTags in `startos/manifest/index.ts`:
-  - `simplexchat/smp-server:v<version>`
-  - `simplexchat/xftp-server:v<version>`
-- Both must be updated together.
+# CLAUDE.md
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the doc map and contribution workflow.
