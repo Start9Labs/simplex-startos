@@ -25,16 +25,14 @@ export const manifest = setupManifest({
   images: {
     smp: {
       source: {
-        dockerTag: 'simplexchat/smp-server:v6.4.5',
+        dockerTag: 'simplexchat/smp-server:v6.5.0',
       },
-      // @TODO aarch64 coming after 6.4.5
       arch: ['x86_64'],
     },
     xftp: {
       source: {
-        dockerTag: 'simplexchat/xftp-server:v6.4.5',
+        dockerTag: 'simplexchat/xftp-server:v6.5.0',
       },
-      // @TODO aarch64 coming after 6.4.5
       arch: ['x86_64'],
     },
   },
