@@ -68,7 +68,7 @@ function isSection(
 }
 
 /**
- * Parse an INI string that uses `: ` as the key/value separator
+ * Parse an INI string that uses `=` as the key/value separator
  */
 export function parse(content: string, options: ParseOptions = {}): IniData {
   const result: IniData = {}
@@ -92,11 +92,11 @@ export function parse(content: string, options: ParseOptions = {}): IniData {
       continue
     }
 
-    // Parse key: value pairs
-    const separatorIndex = trimmed.indexOf(': ')
+    // Parse key = value pairs (first `=` is the separator)
+    const separatorIndex = trimmed.indexOf('=')
     if (separatorIndex !== -1) {
       const key = trimmed.slice(0, separatorIndex).trim()
-      const rawValue = trimmed.slice(separatorIndex + 2)
+      const rawValue = trimmed.slice(separatorIndex + 1)
       const value = parseValue(rawValue, options)
 
       if (currentSection) {
@@ -111,7 +111,7 @@ export function parse(content: string, options: ParseOptions = {}): IniData {
 }
 
 /**
- * Stringify an object to INI format using `: ` as the key/value separator
+ * Stringify an object to INI format using `=` as the key/value separator
  * Note: null and undefined values are omitted (INI has no native null concept)
  */
 export function stringify(
@@ -124,7 +124,7 @@ export function stringify(
   for (const [key, value] of Object.entries(data)) {
     if (value == null) continue // filters both null and undefined
     if (!isSection(value)) {
-      lines.push(`${key}: ${stringifyValue(value, options)}`)
+      lines.push(`${key} = ${stringifyValue(value, options)}`)
     }
   }
 
@@ -135,7 +135,7 @@ export function stringify(
       const sectionLines: string[] = []
       for (const [subKey, subValue] of Object.entries(value)) {
         if (subValue == null) continue
-        sectionLines.push(`${subKey}: ${stringifyValue(subValue, options)}`)
+        sectionLines.push(`${subKey} = ${stringifyValue(subValue, options)}`)
       }
       // Only add section if it has values
       if (sectionLines.length > 0) {

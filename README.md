@@ -43,7 +43,7 @@ This package runs **2 containers**:
 | smp | `simplexchat/smp-server` | SimpleX Messaging Protocol server |
 | xftp | `simplexchat/xftp-server` | SimpleX File Transfer Protocol server |
 
-- **Architectures:** x86_64 only
+- **Architectures:** x86_64, aarch64
 - **Entrypoint:** Default upstream entrypoints for both containers
 
 ## Volume and Data Layout
@@ -133,12 +133,11 @@ When `enableTorProxy` is off (default), the package has no runtime dependencies.
 
 ## Limitations and Differences
 
-1. **x86_64 only** — aarch64 is not yet supported
-2. **No web UI** — server administration is config-file only
-3. **Fixed storage quota** — XFTP is limited to 10 GB (requires direct INI file edit to change)
-4. **No stats dashboard** — Prometheus metrics interval is not configured by default
-5. **TLS is not served by smp-server** — StartOS terminates TLS for the web info page, so `WEB.https`/`cert`/`key` are stripped from `smp-server.ini` on every merge; Let's Encrypt / direct HTTPS configuration on the smp-server side is disabled by design
-6. **Tor SOCKS proxy is opt-in only** — the `[PROXY] socks_proxy` setting is toggled solely by the `tor-settings` action; hand-edits to that field will be overwritten on the next init run
+1. **No web UI** — server administration is config-file only
+2. **Fixed storage quota** — XFTP is limited to 10 GB (requires direct INI file edit to change)
+3. **No stats dashboard** — Prometheus metrics interval is not configured by default
+4. **TLS is not served by smp-server** — StartOS terminates TLS for the web info page, so `WEB.https`/`cert`/`key` are stripped from `smp-server.ini` on every merge; Let's Encrypt / direct HTTPS configuration on the smp-server side is disabled by design
+5. **Tor SOCKS proxy is opt-in only** — the `[PROXY] socks_proxy` setting is toggled solely by the `tor-settings` action; hand-edits to that field will be overwritten on the next init run
 
 ## What Is Unchanged from Upstream
 
@@ -159,7 +158,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development wo
 ```yaml
 package_id: simplex
 image: simplexchat/smp-server, simplexchat/xftp-server
-architectures: [x86_64]
+architectures: [x86_64, aarch64]
 volumes:
   smp-configs: /etc/opt/simplex
   smp-state: /var/opt/simplex
