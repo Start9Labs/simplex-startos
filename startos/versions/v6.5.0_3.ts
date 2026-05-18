@@ -7,18 +7,14 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_5_0_2 = VersionInfo.of({
-  version: '6.5.0:2',
+export const v_6_5_0_3 = VersionInfo.of({
+  version: '6.5.0:3',
   releaseNotes: {
-    en_US: 'Restore 0.3.5.1 → 0.4.x volume-layout migration dropped in 6.5.0:1.',
-    es_ES:
-      'Restaura la migración de diseño de volúmenes 0.3.5.1 → 0.4.x eliminada en 6.5.0:1.',
-    de_DE:
-      'Stellt die in 6.5.0:1 entfernte Volumen-Layout-Migration 0.3.5.1 → 0.4.x wieder her.',
-    pl_PL:
-      'Przywraca migrację układu woluminów 0.3.5.1 → 0.4.x usuniętą w 6.5.0:1.',
-    fr_FR:
-      'Restaure la migration de disposition des volumes 0.3.5.1 → 0.4.x supprimée en 6.5.0:1.',
+    en_US: 'Updated to start-sdk 1.5.2.',
+    es_ES: 'Actualizado a start-sdk 1.5.2.',
+    de_DE: 'Aktualisierung auf start-sdk 1.5.2.',
+    pl_PL: 'Zaktualizowano do start-sdk 1.5.2.',
+    fr_FR: 'Mise à jour vers start-sdk 1.5.2.',
   },
   migrations: {
     up: async ({ effects }) => {
