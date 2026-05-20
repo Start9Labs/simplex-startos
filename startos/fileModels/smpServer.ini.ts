@@ -1,7 +1,7 @@
 import { FileHelper, z } from '@start9labs/start-sdk'
-import { smpPort, smpStatePath, webPort } from '../utils'
-import * as INI from './ini-lib'
 import { sdk } from '../sdk'
+import { smpControlPort, smpPort, smpStatePath, webPort } from '../utils'
+import * as INI from './ini-lib'
 
 const storeLogSchema = z.object({
   enable: z.literal('on').catch('on'),
@@ -17,6 +17,9 @@ const authSchema = z.object({
 const transportSchema = z.object({
   host: z.literal('<hostnames>').catch('<hostnames>'),
   port: z.literal(`${smpPort},443`).catch(`${smpPort},443`),
+  log_tls_errors: z.literal('off').catch('off'),
+  websockets: z.literal('off').catch('off'),
+  control_port: z.literal(smpControlPort).catch(smpControlPort),
 })
 
 const proxySchema = z.object({

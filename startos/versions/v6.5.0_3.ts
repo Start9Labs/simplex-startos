@@ -7,18 +7,19 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_5_0_2 = VersionInfo.of({
-  version: '6.5.0:2',
+export const v_6_5_0_3 = VersionInfo.of({
+  version: '6.5.0:3',
   releaseNotes: {
-    en_US: 'Restore 0.3.5.1 → 0.4.x volume-layout migration dropped in 6.5.0:1.',
+    en_US:
+      'Fix SMP server failing to start on fresh installs ("no key websockets in section TRANSPORT").',
     es_ES:
-      'Restaura la migración de diseño de volúmenes 0.3.5.1 → 0.4.x eliminada en 6.5.0:1.',
+      'Corrige el fallo de inicio del servidor SMP en instalaciones nuevas ("no key websockets in section TRANSPORT").',
     de_DE:
-      'Stellt die in 6.5.0:1 entfernte Volumen-Layout-Migration 0.3.5.1 → 0.4.x wieder her.',
+      'Behebt den Startfehler des SMP-Servers bei Neuinstallationen ("no key websockets in section TRANSPORT").',
     pl_PL:
-      'Przywraca migrację układu woluminów 0.3.5.1 → 0.4.x usuniętą w 6.5.0:1.',
+      'Naprawia błąd uruchamiania serwera SMP przy nowych instalacjach ("no key websockets in section TRANSPORT").',
     fr_FR:
-      'Restaure la migration de disposition des volumes 0.3.5.1 → 0.4.x supprimée en 6.5.0:1.',
+      'Corrige l\'échec de démarrage du serveur SMP lors des nouvelles installations ("no key websockets in section TRANSPORT").',
   },
   migrations: {
     up: async ({ effects }) => {

@@ -1,6 +1,7 @@
 import { sdk } from './sdk'
 
 export const smpPort = 5223
+export const smpControlPort = 5224
 export const xftpPort = 5225
 
 export const smpStatePath = '/var/opt/simplex'

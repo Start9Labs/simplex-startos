@@ -68,7 +68,11 @@ function isSection(
 }
 
 /**
- * Parse an INI string that uses `: ` as the key/value separator
+ * Parse an INI string. Accepts both `=` (current upstream format since
+ * simplexmq #1767) and `:` (legacy format we used to write) as the key/value
+ * separator, so existing colon-formatted files still read while we migrate to
+ * `=`. Whichever separator appears first is the delimiter — keys never contain
+ * `:` or `=`, so the first occurrence is always the boundary.
  */
 export function parse(content: string, options: ParseOptions = {}): IniData {
   const result: IniData = {}
@@ -92,11 +96,18 @@ export function parse(content: string, options: ParseOptions = {}): IniData {
       continue
     }
 
-    // Parse key: value pairs
-    const separatorIndex = trimmed.indexOf(': ')
+    // Parse key/value pairs split on the first `=` or `:` (whichever is first)
+    const eqIndex = trimmed.indexOf('=')
+    const colonIndex = trimmed.indexOf(':')
+    const separatorIndex =
+      eqIndex === -1
+        ? colonIndex
+        : colonIndex === -1
+          ? eqIndex
+          : Math.min(eqIndex, colonIndex)
     if (separatorIndex !== -1) {
       const key = trimmed.slice(0, separatorIndex).trim()
-      const rawValue = trimmed.slice(separatorIndex + 2)
+      const rawValue = trimmed.slice(separatorIndex + 1)
       const value = parseValue(rawValue, options)
 
       if (currentSection) {
@@ -111,7 +122,9 @@ export function parse(content: string, options: ParseOptions = {}): IniData {
 }
 
 /**
- * Stringify an object to INI format using `: ` as the key/value separator
+ * Stringify an object to INI format using ` = ` as the key/value separator (the
+ * current upstream format). Files written by older versions used `:`; they are
+ * rewritten to `=` on the next merge, since `parse` accepts both.
  * Note: null and undefined values are omitted (INI has no native null concept)
  */
 export function stringify(
@@ -124,7 +137,7 @@ export function stringify(
   for (const [key, value] of Object.entries(data)) {
     if (value == null) continue // filters both null and undefined
     if (!isSection(value)) {
-      lines.push(`${key}: ${stringifyValue(value, options)}`)
+      lines.push(`${key} = ${stringifyValue(value, options)}`)
     }
   }
 
@@ -135,7 +148,7 @@ export function stringify(
       const sectionLines: string[] = []
       for (const [subKey, subValue] of Object.entries(value)) {
         if (subValue == null) continue
-        sectionLines.push(`${subKey}: ${stringifyValue(subValue, options)}`)
+        sectionLines.push(`${subKey} = ${stringifyValue(subValue, options)}`)
       }
       // Only add section if it has values
       if (sectionLines.length > 0) {
