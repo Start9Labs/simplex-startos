@@ -7,7 +7,7 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
-export const v_6_5_0_3 = VersionInfo.of({
+export const current = VersionInfo.of({
   version: '6.5.0:3',
   releaseNotes: {
     en_US:
