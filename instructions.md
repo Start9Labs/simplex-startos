@@ -36,4 +36,4 @@ This setting is opt-in: hand-edits to the `[PROXY] socks_proxy` field in the INI
 
 ### Advanced configuration
 
-Most upstream `smp-server.ini`, `file-server.ini`, and `xftp-server.ini` fields are passed through unchanged. The package only enforces a small set of keys (transport address, store-log retention, file path, storage quota, web TLS, and the proxy field above); anything else you set by editing the INI files directly in the config volumes will be preserved.
+Most upstream `smp-server.ini` and `file-server.ini` fields are passed through unchanged. The package only enforces a small set of keys (transport settings, store-log retention, file path, storage quota, web TLS, and the proxy field above); anything else you set by editing the INI files directly in the config volumes will be preserved.
