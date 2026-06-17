@@ -8,18 +8,13 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
 export const current = VersionInfo.of({
-  version: '6.5.0:3',
+  version: '6.5.0:4',
   releaseNotes: {
-    en_US:
-      'Fix SMP server failing to start on fresh installs ("no key websockets in section TRANSPORT").',
-    es_ES:
-      'Corrige el fallo de inicio del servidor SMP en instalaciones nuevas ("no key websockets in section TRANSPORT").',
-    de_DE:
-      'Behebt den Startfehler des SMP-Servers bei Neuinstallationen ("no key websockets in section TRANSPORT").',
-    pl_PL:
-      'Naprawia błąd uruchamiania serwera SMP przy nowych instalacjach ("no key websockets in section TRANSPORT").',
-    fr_FR:
-      'Corrige l\'échec de démarrage du serveur SMP lors des nouvelles installations ("no key websockets in section TRANSPORT").',
+    en_US: 'Add aarch64 (ARM64) architecture support.',
+    es_ES: 'Añade compatibilidad con la arquitectura aarch64 (ARM64).',
+    de_DE: 'Unterstützung für die aarch64-Architektur (ARM64) hinzugefügt.',
+    pl_PL: 'Dodano obsługę architektury aarch64 (ARM64).',
+    fr_FR: "Ajout de la prise en charge de l'architecture aarch64 (ARM64).",
   },
   migrations: {
     up: async ({ effects }) => {

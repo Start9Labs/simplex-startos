@@ -4,7 +4,7 @@ import i18n from './i18n'
 export const manifest = setupManifest({
   id: 'simplex',
   title: 'SimpleX Server',
-  license: 'MIT',
+  license: 'AGPL-3.0',
   packageRepo: 'https://github.com/Start9Labs/simplex-startos',
   upstreamRepo: 'https://github.com/simplex-chat/simplexmq/',
   marketingUrl: 'https://simplex.chat/',
@@ -27,13 +27,13 @@ export const manifest = setupManifest({
       source: {
         dockerTag: 'simplexchat/smp-server:v6.5.0',
       },
-      arch: ['x86_64'],
+      arch: ['x86_64', 'aarch64'],
     },
     xftp: {
       source: {
         dockerTag: 'simplexchat/xftp-server:v6.5.0',
       },
-      arch: ['x86_64'],
+      arch: ['x86_64', 'aarch64'],
     },
   },
   dependencies: {
