@@ -8,13 +8,38 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
 export const current = VersionInfo.of({
-  version: '6.5.0:4',
+  version: '6.5.2:0',
   releaseNotes: {
-    en_US: 'Add aarch64 (ARM64) architecture support.',
-    es_ES: 'Añade compatibilidad con la arquitectura aarch64 (ARM64).',
-    de_DE: 'Unterstützung für die aarch64-Architektur (ARM64) hinzugefügt.',
-    pl_PL: 'Dodano obsługę architektury aarch64 (ARM64).',
-    fr_FR: "Ajout de la prise en charge de l'architecture aarch64 (ARM64).",
+    en_US: `Updated SimpleX (smp-server & xftp-server) to 6.5.2.
+
+- XFTP: backwards-compatible file header decoding.
+- XFTP: server web page tweaks.
+
+Full changelog: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
+    es_ES: `Actualizado SimpleX (smp-server y xftp-server) a 6.5.2.
+
+- XFTP: decodificación de encabezados de archivo retrocompatible.
+- XFTP: ajustes en la página web del servidor.
+
+Registro de cambios completo: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
+    de_DE: `SimpleX (smp-server & xftp-server) auf 6.5.2 aktualisiert.
+
+- XFTP: abwärtskompatible Dekodierung von Datei-Headern.
+- XFTP: Anpassungen der Server-Webseite.
+
+Vollständiges Änderungsprotokoll: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
+    pl_PL: `Zaktualizowano SimpleX (smp-server i xftp-server) do 6.5.2.
+
+- XFTP: wstecznie zgodne dekodowanie nagłówków plików.
+- XFTP: poprawki strony internetowej serwera.
+
+Pełna lista zmian: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
+    fr_FR: `Mise à jour de SimpleX (smp-server et xftp-server) vers 6.5.2.
+
+- XFTP : décodage des en-têtes de fichier rétrocompatible.
+- XFTP : ajustements de la page web du serveur.
+
+Journal des modifications complet : https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
   },
   migrations: {
     up: async ({ effects }) => {
