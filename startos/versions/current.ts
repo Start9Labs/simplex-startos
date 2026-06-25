@@ -100,7 +100,7 @@ Journal des modifications complet : https://github.com/simplex-chat/simplexmq/bl
             'sh',
             [
               '-c',
-              'mv /media/startos/volumes/xftp/* /media/startos/volumes/xftp-files',
+              'mv /media/startos/volumes/main/xftp/* /media/startos/volumes/xftp-files',
             ],
             (err) => (err ? rej(err) : res(null)),
           )
