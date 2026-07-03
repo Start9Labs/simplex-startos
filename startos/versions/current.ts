@@ -8,38 +8,13 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 // NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
 
 export const current = VersionInfo.of({
-  version: '6.5.2:0',
+  version: '6.5.2:1',
   releaseNotes: {
-    en_US: `Updated SimpleX (smp-server & xftp-server) to 6.5.2.
-
-- XFTP: backwards-compatible file header decoding.
-- XFTP: server web page tweaks.
-
-Full changelog: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
-    es_ES: `Actualizado SimpleX (smp-server y xftp-server) a 6.5.2.
-
-- XFTP: decodificación de encabezados de archivo retrocompatible.
-- XFTP: ajustes en la página web del servidor.
-
-Registro de cambios completo: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
-    de_DE: `SimpleX (smp-server & xftp-server) auf 6.5.2 aktualisiert.
-
-- XFTP: abwärtskompatible Dekodierung von Datei-Headern.
-- XFTP: Anpassungen der Server-Webseite.
-
-Vollständiges Änderungsprotokoll: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
-    pl_PL: `Zaktualizowano SimpleX (smp-server i xftp-server) do 6.5.2.
-
-- XFTP: wstecznie zgodne dekodowanie nagłówków plików.
-- XFTP: poprawki strony internetowej serwera.
-
-Pełna lista zmian: https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
-    fr_FR: `Mise à jour de SimpleX (smp-server et xftp-server) vers 6.5.2.
-
-- XFTP : décodage des en-têtes de fichier rétrocompatible.
-- XFTP : ajustements de la page web du serveur.
-
-Journal des modifications complet : https://github.com/simplex-chat/simplexmq/blob/master/CHANGELOG.md`,
+    en_US: 'Internal updates (start-sdk 2.0.x)',
+    es_ES: 'Actualizaciones internas (start-sdk 2.0.x)',
+    de_DE: 'Interne Aktualisierungen (start-sdk 2.0.x)',
+    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 2.0.x)',
+    fr_FR: 'Mises à jour internes (start-sdk 2.0.x)',
   },
   migrations: {
     up: async ({ effects }) => {
