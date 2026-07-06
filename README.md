@@ -102,7 +102,7 @@ xftp://<fingerprint>:<password>@<hostname>:5225
 
 | Action | ID | Purpose | Inputs | Availability |
 |--------|----|---------|--------|--------------|
-| Tor Settings | `tor-settings` | Configure whether this SMP server forwards messages to `.onion` destination servers via Tor. | `enableTorProxy: boolean` (default `false`) — when on, adds a running dependency on the Tor service and writes its container IP to `[PROXY] socks_proxy` in `smp-server.ini`; when off, strips that setting and drops the Tor dependency. | Any status |
+| Tor Settings | `tor-settings` | Configure whether this SMP server forwards messages to `.onion` destination servers via Tor. | `enableTorProxy: boolean` (default `false`) — when on, adds a running dependency on the Tor service and writes Tor's SOCKS bridge address (`10.0.3.1:<assigned port>`, resolved via the `bridgeAddress` helper) to `[PROXY] socks_proxy` in `smp-server.ini`; when off, strips that setting and drops the Tor dependency. | Any status |
 
 The form is prepopulated from `enableTorProxy` in `store.json`; submissions merge the new value back.
 

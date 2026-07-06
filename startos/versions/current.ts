@@ -10,11 +10,16 @@ import { smpServerIni } from '../fileModels/smpServer.ini'
 export const current = VersionInfo.of({
   version: '6.5.2:1',
   releaseNotes: {
-    en_US: 'Internal updates (start-sdk 2.0.x)',
-    es_ES: 'Actualizaciones internas (start-sdk 2.0.x)',
-    de_DE: 'Interne Aktualisierungen (start-sdk 2.0.x)',
-    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 2.0.x)',
-    fr_FR: 'Mises à jour internes (start-sdk 2.0.x)',
+    en_US:
+      'Internal updates (start-sdk 2.0.x). The server now reaches Tor over the internal network bridge and no longer restarts when Tor is updated; installing or removing Tor reconfigures the proxy automatically with a single restart.',
+    es_ES:
+      'Actualizaciones internas (start-sdk 2.0.x). El servidor ahora alcanza Tor a través del puente de red interno y ya no se reinicia cuando Tor se actualiza; instalar o eliminar Tor reconfigura el proxy automáticamente con un solo reinicio.',
+    de_DE:
+      'Interne Aktualisierungen (start-sdk 2.0.x). Der Server erreicht Tor jetzt über die interne Netzwerk-Bridge und startet nicht mehr neu, wenn Tor aktualisiert wird; das Installieren oder Entfernen von Tor konfiguriert den Proxy automatisch mit einem einzigen Neustart um.',
+    pl_PL:
+      'Aktualizacje wewnętrzne (start-sdk 2.0.x). Serwer łączy się teraz z Torem przez wewnętrzny mostek sieciowy i nie restartuje się już przy aktualizacji Tora; instalacja lub usunięcie Tora automatycznie rekonfiguruje proxy z jednym restartem.',
+    fr_FR:
+      "Mises à jour internes (start-sdk 2.0.x). Le serveur atteint désormais Tor via le pont réseau interne et ne redémarre plus lorsque Tor est mis à jour ; l'installation ou la suppression de Tor reconfigure le proxy automatiquement avec un seul redémarrage.",
   },
   migrations: {
     up: async ({ effects }) => {
