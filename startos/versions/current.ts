@@ -1,129 +1,13 @@
-import { IMPOSSIBLE, utils, VersionInfo, YAML } from '@start9labs/start-sdk'
-import { execFile } from 'child_process'
-import { readdir, readFile, rm } from 'fs/promises'
-import { join } from 'path'
-import { fileServerIni } from '../fileModels/fileServer.ini'
-import { smpServerIni } from '../fileModels/smpServer.ini'
-
-// NOTE, adding passwords to xftp server addresses. Previous addresses are less secure and expected to break.
+import { VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '6.5.2:1',
+  version: '6.5.2:2',
   releaseNotes: {
-    en_US:
-      'Internal updates (start-sdk 2.0.x). The server now reaches Tor over the internal network bridge and no longer restarts when Tor is updated; installing or removing Tor reconfigures the proxy automatically with a single restart.',
-    es_ES:
-      'Actualizaciones internas (start-sdk 2.0.x). El servidor ahora alcanza Tor a través del puente de red interno y ya no se reinicia cuando Tor se actualiza; instalar o eliminar Tor reconfigura el proxy automáticamente con un solo reinicio.',
-    de_DE:
-      'Interne Aktualisierungen (start-sdk 2.0.x). Der Server erreicht Tor jetzt über die interne Netzwerk-Bridge und startet nicht mehr neu, wenn Tor aktualisiert wird; das Installieren oder Entfernen von Tor konfiguriert den Proxy automatisch mit einem einzigen Neustart um.',
-    pl_PL:
-      'Aktualizacje wewnętrzne (start-sdk 2.0.x). Serwer łączy się teraz z Torem przez wewnętrzny mostek sieciowy i nie restartuje się już przy aktualizacji Tora; instalacja lub usunięcie Tora automatycznie rekonfiguruje proxy z jednym restartem.',
-    fr_FR:
-      "Mises à jour internes (start-sdk 2.0.x). Le serveur atteint désormais Tor via le pont réseau interne et ne redémarre plus lorsque Tor est mis à jour ; l'installation ou la suppression de Tor reconfigure le proxy automatiquement avec un seul redémarrage.",
+    en_US: 'Internal updates',
+    es_ES: 'Actualizaciones internas',
+    de_DE: 'Interne Aktualisierungen',
+    pl_PL: 'Aktualizacje wewnętrzne',
+    fr_FR: 'Mises à jour internes',
   },
-  migrations: {
-    up: async ({ effects }) => {
-      // get old stats.yaml
-      const statsYaml:
-        | {
-            data: {
-              'SimpleX SMP Server Address': {
-                value: string
-              }
-            }
-          }
-        | undefined = await readFile(
-        '/media/startos/volumes/main/start9/stats.yaml',
-        'utf-8',
-      ).then(YAML.parse, () => undefined)
-
-      if (statsYaml) {
-        // config (was used for smp-server.ini)
-        await new Promise((res, rej) => {
-          execFile(
-            'sh',
-            [
-              '-c',
-              'mv /media/startos/volumes/conf/* /media/startos/volumes/smp-configs',
-            ],
-            (err) => (err ? rej(err) : res(null)),
-          )
-        }).catch(console.error)
-
-        // xftp (was used for file-server.ini)
-        await new Promise((res, rej) => {
-          execFile(
-            'sh',
-            [
-              '-c',
-              'mv /media/startos/volumes/xftp/* /media/startos/volumes/xftp-configs',
-            ],
-            (err) => (err ? rej(err) : res(null)),
-          )
-        }).catch(console.error)
-
-        // log (was used for smp-state)
-        await new Promise((res, rej) => {
-          execFile(
-            'sh',
-            [
-              '-c',
-              'mv /media/startos/volumes/log/* /media/startos/volumes/smp-state',
-            ],
-            (err) => (err ? rej(err) : res(null)),
-          )
-        }).catch(console.error)
-
-        // main (was used for xftp files)
-        await new Promise((res, rej) => {
-          execFile(
-            'sh',
-            [
-              '-c',
-              'mv /media/startos/volumes/main/xftp/* /media/startos/volumes/xftp-files',
-            ],
-            (err) => (err ? rej(err) : res(null)),
-          )
-        }).catch(console.error)
-
-        const create_password =
-          new URL(
-            statsYaml.data['SimpleX SMP Server Address'].value.replace(
-              'smp://',
-              'https://',
-            ),
-          ).password ||
-          utils.getDefaultString({
-            charset: 'a-z,A-Z,1-9,!,$,%,&,*',
-            len: 21,
-          })
-
-        // seed smp-server.ini (zod schema handles all other defaults)
-        await smpServerIni.merge(effects, {
-          AUTH: { create_password },
-        })
-
-        // seed file-server.ini (zod schema handles all other defaults)
-        await fileServerIni.merge(effects, {
-          AUTH: { create_password },
-        })
-        // remove everything from old volumes
-        await Promise.all(
-          ['conf', 'xftp', 'log', 'main'].map((vol) =>
-            clearVolume(`/media/startos/volumes/${vol}`),
-          ),
-        )
-      }
-    },
-    down: IMPOSSIBLE,
-  },
+  migrations: {},
 })
-
-async function clearVolume(volumePath: string) {
-  const entries = await readdir(volumePath)
-  await Promise.all(
-    entries.map((entry) =>
-      rm(join(volumePath, entry), { recursive: true }).catch(console.error),
-    ),
-  )
-}
