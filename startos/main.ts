@@ -31,7 +31,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
    */
   return sdk.Daemons.of(effects)
     .addDaemon('smp', {
-      subcontainer: await sdk.SubContainer.of(
+      subcontainer: sdk.SubContainer.of(
         effects,
         { imageId: 'smp' },
         smpMounts,
@@ -51,7 +51,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       requires: [],
     })
     .addDaemon('xftp', {
-      subcontainer: await sdk.SubContainer.of(
+      subcontainer: sdk.SubContainer.of(
         effects,
         { imageId: 'xftp' },
         xftpMounts,
