@@ -38,23 +38,23 @@ This package runs both SMP and XFTP servers with auto-generated credentials and 
 
 This package runs **2 containers**:
 
-| Container | Image | Purpose |
-|-----------|-------|---------|
-| smp | `simplexchat/smp-server` | SimpleX Messaging Protocol server |
-| xftp | `simplexchat/xftp-server` | SimpleX File Transfer Protocol server |
+| Container | Image                     | Purpose                               |
+| --------- | ------------------------- | ------------------------------------- |
+| smp       | `simplexchat/smp-server`  | SimpleX Messaging Protocol server     |
+| xftp      | `simplexchat/xftp-server` | SimpleX File Transfer Protocol server |
 
 - **Architectures:** x86_64 and aarch64
 - **Entrypoint:** Default upstream entrypoints for both containers
 
 ## Volume and Data Layout
 
-| Volume | Mount Point | Container | Contents |
-|--------|-------------|-----------|----------|
-| `smp-configs` | `/etc/opt/simplex` | smp | SMP server configuration, TLS keys, fingerprint |
-| `smp-state` | `/var/opt/simplex` | smp | SMP message queues, server state, and `store.json` (StartOS-managed action state) |
-| `xftp-configs` | `/etc/opt/simplex-xftp` | xftp | XFTP server configuration, TLS keys, fingerprint |
-| `xftp-state` | `/var/opt/simplex-xftp` | xftp | XFTP file metadata and state |
-| `xftp-files` | `/srv/xftp` | xftp | Uploaded file storage |
+| Volume         | Mount Point             | Container | Contents                                                                          |
+| -------------- | ----------------------- | --------- | --------------------------------------------------------------------------------- |
+| `smp-configs`  | `/etc/opt/simplex`      | smp       | SMP server configuration, TLS keys, fingerprint                                   |
+| `smp-state`    | `/var/opt/simplex`      | smp       | SMP message queues, server state, and `store.json` (StartOS-managed action state) |
+| `xftp-configs` | `/etc/opt/simplex-xftp` | xftp      | XFTP server configuration, TLS keys, fingerprint                                  |
+| `xftp-state`   | `/var/opt/simplex-xftp` | xftp      | XFTP file metadata and state                                                      |
+| `xftp-files`   | `/srv/xftp`             | xftp      | Uploaded file storage                                                             |
 
 `store.json` is a StartOS-only file (never read by smp-server) that records action-driven toggles — currently just `enableTorProxy: boolean`.
 
@@ -72,24 +72,24 @@ On update/restore, existing configuration files are merged with defaults (preser
 
 ## Configuration Management
 
-| StartOS-Managed (enforced) | Upstream-Managed (pass-through) |
-|------------------------------------|------------------|
-| `TRANSPORT.host: <hostnames>`, `TRANSPORT.port: 5223,443` (smp) / `5225` (xftp); smp also pins `control_port: 5224`, `log_tls_errors: off`, `websockets: off` | Stats / Prometheus interval |
-| `STORE_LOG.enable: on`, `expire_messages_days: 365`, `expire_messages_on_start: off`, `expire_ntfs_hours: 168` (smp) | Any other key not listed here |
-| `FILES.path`, `FILES.storage_quota: 10gb` (xftp) | |
-| `AUTH.create_password` (auto-generated 21-char) | |
-| `INACTIVE_CLIENTS.disconnect: off` (both) | |
-| `WEB.static_path`, `WEB.http: 8000`; `WEB.https`/`cert`/`key` stripped — StartOS terminates TLS | |
-| `PROXY.socks_proxy` — written/stripped by the **Tor Settings** action | |
+| StartOS-Managed (enforced)                                                                                                                                    | Upstream-Managed (pass-through) |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `TRANSPORT.host: <hostnames>`, `TRANSPORT.port: 5223,443` (smp) / `5225` (xftp); smp also pins `control_port: 5224`, `log_tls_errors: off`, `websockets: off` | Stats / Prometheus interval     |
+| `STORE_LOG.enable: on`, `expire_messages_days: 365`, `expire_messages_on_start: off`, `expire_ntfs_hours: 168` (smp)                                          | Any other key not listed here   |
+| `FILES.path`, `FILES.storage_quota: 10gb` (xftp)                                                                                                              |                                 |
+| `AUTH.create_password` (auto-generated 21-char)                                                                                                               |                                 |
+| `INACTIVE_CLIENTS.disconnect: off` (both)                                                                                                                     |                                 |
+| `WEB.static_path`, `WEB.http: 8000`; `WEB.https`/`cert`/`key` stripped — StartOS terminates TLS                                                               |                                 |
+| `PROXY.socks_proxy` — written/stripped by the **Tor Settings** action                                                                                         |                                 |
 
 StartOS INI schemas only constrain the fields above. Unknown keys are preserved by `merge()`, so advanced users may edit the INI files directly in the config volumes to set anything else (control ports, inactive-client timeouts, stats/prometheus, etc.) and those values will survive StartOS rewrites.
 
 ## Network Access and Interfaces
 
-| Interface | ID | Type | Port | Scheme | Description |
-|-----------|----|------|------|--------|-------------|
-| SMP Server | `smp` | api | 5223 | `smp://` | Messaging protocol (also listens on 443) |
-| XFTP Server | `xftp` | api | 5225 | `xftp://` | File transfer protocol |
+| Interface   | ID     | Type | Port | Scheme    | Description                              |
+| ----------- | ------ | ---- | ---- | --------- | ---------------------------------------- |
+| SMP Server  | `smp`  | api  | 5223 | `smp://`  | Messaging protocol (also listens on 443) |
+| XFTP Server | `xftp` | api  | 5225 | `xftp://` | File transfer protocol                   |
 
 Both interfaces are **masked** and include credentials in the connection URL:
 
@@ -100,9 +100,9 @@ xftp://<fingerprint>:<password>@<hostname>:5225
 
 ## Actions (StartOS UI)
 
-| Action | ID | Purpose | Inputs | Availability |
-|--------|----|---------|--------|--------------|
-| Tor Settings | `tor-settings` | Configure whether this SMP server forwards messages to `.onion` destination servers via Tor. | `enableTorProxy: boolean` (default `false`) — when on, adds a running dependency on the Tor service and writes Tor's SOCKS bridge address (`10.0.3.1:<assigned port>`, resolved via the `bridgeAddress` helper) to `[PROXY] socks_proxy` in `smp-server.ini`; when off, strips that setting and drops the Tor dependency. | Any status |
+| Action       | ID             | Purpose                                                                                      | Inputs                                                                                                                                                                                                                                                                                                                     | Availability |
+| ------------ | -------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| Tor Settings | `tor-settings` | Configure whether this SMP server forwards messages to `.onion` destination servers via Tor. | `enableTorProxy: boolean` (default `false`) — when on, adds a running dependency on the Tor service and writes Tor's SOCKS bridge address (`10.0.3.1:<assigned port>`, resolved via `sdk.host.getBridgeAddress`) to `[PROXY] socks_proxy` in `smp-server.ini`; when off, strips that setting and drops the Tor dependency. | Any status   |
 
 The form is prepopulated from `enableTorProxy` in `store.json`; submissions merge the new value back.
 
@@ -116,18 +116,18 @@ The form is prepopulated from `enableTorProxy` in `store.json`; submissions merg
 
 ## Health Checks
 
-| Check | Daemon | Method | Success Condition |
-|-------|--------|--------|-------------------|
-| SMP Server | smp | Port listening (5223) | Port 5223 responds |
-| XFTP Server | xftp | Port listening (5225) | Port 5225 responds |
+| Check       | Daemon | Method                | Success Condition  |
+| ----------- | ------ | --------------------- | ------------------ |
+| SMP Server  | smp    | Port listening (5223) | Port 5223 responds |
+| XFTP Server | xftp   | Port listening (5225) | Port 5225 responds |
 
 Both daemons start independently (no ordering dependency).
 
 ## Dependencies
 
-| Service | Required? | Version | Health Checks | Purpose |
-|---------|-----------|---------|---------------|---------|
-| `tor` | Optional — only active when `enableTorProxy` is on in the **Tor Settings** action | `>=0.4.9.5:0` | none | Provides the SOCKS5 endpoint that smp-server uses to forward messages to `.onion` destination servers. |
+| Service | Required?                                                                         | Version       | Health Checks | Purpose                                                                                                |
+| ------- | --------------------------------------------------------------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
+| `tor`   | Optional — only active when `enableTorProxy` is on in the **Tor Settings** action | `>=0.4.9.5:0` | none          | Provides the SOCKS5 endpoint that smp-server uses to forward messages to `.onion` destination servers. |
 
 When `enableTorProxy` is off (default), the package has no runtime dependencies.
 
@@ -171,7 +171,7 @@ ports:
 dependencies:
   tor:
     required: false
-    version: ">=0.4.9.5:0"
+    version: '>=0.4.9.5:0'
     activated_by: tor-settings action (enableTorProxy=true)
 startos_managed_env_vars: []
 actions:

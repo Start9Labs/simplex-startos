@@ -2,7 +2,6 @@ import { socksHostId, socksPort } from 'tor-startos/startos/utils'
 import { smpServerIni } from '../fileModels/smpServer.ini'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
-import {} from '../utils'
 
 export const watchTorProxy = sdk.setupOnInit(async (effects) => {
   const enableTorProxy = await storeJson
