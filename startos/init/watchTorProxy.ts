@@ -19,7 +19,7 @@ export const watchTorProxy = sdk.setupOnInit(async (effects) => {
 
   // Tor SOCKS over the bridge, no fallback: anonymizing semantics mean a dead
   // address must not be dialed, so the proxy line is written only once Tor's
-  // binding resolves. The mapped address changes solely on Tor
+  // binding resolves. The bridge address changes solely on Tor
   // install/uninstall/port-change, so this .const() heals on late Tor install
   // (one restart) and never restarts the server on Tor updates.
   const socksProxy = await sdk.host

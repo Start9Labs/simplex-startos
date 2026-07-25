@@ -1,6 +1,6 @@
 import { FileHelper } from '@start9labs/start-sdk'
 import { sdk } from './sdk'
-import { smpPort, webPort, xftpPort } from './utils'
+import { smpPort, xftpPort } from './utils'
 import { smpServerIni } from './fileModels/smpServer.ini'
 import { i18n } from './i18n'
 

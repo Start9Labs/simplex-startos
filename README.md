@@ -149,7 +149,7 @@ When `enableTorProxy` is off (default), the package has no runtime dependencies.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development workflow.
+Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure.
 
 ---
 
@@ -171,7 +171,6 @@ ports:
 dependencies:
   tor:
     required: false
-    version: '>=0.4.9.5:0'
     activated_by: tor-settings action (enableTorProxy=true)
 startos_managed_env_vars: []
 actions:
