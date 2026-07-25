@@ -2,7 +2,7 @@ import { socksHostId, socksPort } from 'tor-startos/startos/utils'
 import { smpServerIni } from '../fileModels/smpServer.ini'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
-import { bridgeAddress } from '../utils'
+import {} from '../utils'
 
 export const watchTorProxy = sdk.setupOnInit(async (effects) => {
   const enableTorProxy = await storeJson
@@ -23,11 +23,13 @@ export const watchTorProxy = sdk.setupOnInit(async (effects) => {
   // binding resolves. The mapped address changes solely on Tor
   // install/uninstall/port-change, so this .const() heals on late Tor install
   // (one restart) and never restarts the server on Tor updates.
-  const socksProxy = await bridgeAddress(effects, {
-    packageId: 'tor',
-    hostId: socksHostId,
-    internalPort: socksPort,
-  }).const()
+  const socksProxy = await sdk.host
+    .getBridgeAddress(effects, {
+      packageId: 'tor',
+      hostId: socksHostId,
+      internalPort: socksPort,
+    })
+    .const()
 
   await smpServerIni.merge(
     effects,
