@@ -1,23 +1,48 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '6.5.2:5',
+  version: '7.0.0:0',
   releaseNotes: {
-    en_US: `Resolves the addresses of connected services more reliably.
+    en_US: `Updated SimpleX to 7.0.0.
 
-SimpleX looked up where to reach its dependencies through a field that only applies to one of the two ways a service can publish a port. It now reads the address itself, so a dependency changing how it serves TLS can no longer leave SimpleX unable to find it. Nothing changes in normal operation.`,
-    es_ES: `Resuelve de forma más fiable las direcciones de los servicios conectados.
+- Fixes two memory leaks in the SMP server that grew as clients subscribed and unsubscribed.
+- The SMP proxy reconnects reliably to a relay after that relay restarts.
+- Hardening across cryptography and message parsing, including a limit on decompressed message size.
+- Accepts IPv6 server addresses written in bracketed form.
 
-SimpleX localizaba sus dependencias mediante un campo que solo se aplica a una de las dos formas en que un servicio puede publicar un puerto. Ahora lee la dirección en sí, de modo que si una dependencia cambia su forma de servir TLS, SimpleX seguirá encontrándola. En funcionamiento normal no cambia nada.`,
-    de_DE: `Ermittelt die Adressen verbundener Dienste zuverlässiger.
+Full upstream release notes: https://github.com/simplex-chat/simplexmq/releases/tag/v7.0.0`,
+    es_ES: `Actualiza SimpleX a la versión 7.0.0.
 
-SimpleX suchte seine Abhängigkeiten über ein Feld, das nur für eine der beiden Arten gilt, auf die ein Dienst einen Port veröffentlichen kann. Jetzt wird die Adresse selbst gelesen, sodass eine Abhängigkeit, die ihre TLS-Bereitstellung ändert, für SimpleX auffindbar bleibt. Im normalen Betrieb ändert sich nichts.`,
-    pl_PL: `Pewniej ustala adresy połączonych usług.
+- Corrige dos fugas de memoria en el servidor SMP que crecían a medida que los clientes se suscribían y cancelaban su suscripción.
+- El proxy SMP se reconecta de forma fiable a un repetidor después de que este se reinicie.
+- Refuerzo de la criptografía y del análisis de mensajes, incluido un límite en el tamaño de los mensajes descomprimidos.
+- Acepta direcciones de servidor IPv6 escritas entre corchetes.
 
-SimpleX wyszukiwał swoje zależności przez pole, które dotyczy tylko jednego z dwóch sposobów publikowania portu przez usługę. Teraz odczytuje sam adres, więc zależność zmieniająca sposób udostępniania TLS nadal pozostanie odnajdywalna dla SimpleX. W normalnej pracy nic się nie zmienia.`,
-    fr_FR: `Détermine plus fiablement les adresses des services connectés.
+Notas completas de la versión original: https://github.com/simplex-chat/simplexmq/releases/tag/v7.0.0`,
+    de_DE: `Aktualisiert SimpleX auf 7.0.0.
 
-SimpleX localisait ses dépendances via un champ qui ne s'applique qu'à l'un des deux modes de publication d'un port par un service. Il lit désormais l'adresse elle-même : une dépendance qui change sa façon de servir TLS reste donc trouvable par SimpleX. Rien ne change en fonctionnement normal.`,
+- Behebt zwei Speicherlecks im SMP-Server, die mit dem An- und Abmelden von Clients anwuchsen.
+- Der SMP-Proxy verbindet sich nach einem Neustart des Relays zuverlässig wieder mit diesem.
+- Härtung von Kryptografie und Nachrichtenverarbeitung, einschließlich einer Begrenzung der entpackten Nachrichtengröße.
+- Akzeptiert IPv6-Serveradressen in Klammerschreibweise.
+
+Vollständige Versionshinweise des Upstream-Projekts: https://github.com/simplex-chat/simplexmq/releases/tag/v7.0.0`,
+    pl_PL: `Aktualizuje SimpleX do wersji 7.0.0.
+
+- Naprawia dwa wycieki pamięci w serwerze SMP, które narastały wraz z subskrybowaniem i anulowaniem subskrypcji przez klientów.
+- Proxy SMP niezawodnie łączy się ponownie z przekaźnikiem po jego ponownym uruchomieniu.
+- Wzmocnienia w kryptografii i przetwarzaniu wiadomości, w tym limit rozmiaru zdekompresowanych wiadomości.
+- Obsługuje adresy serwerów IPv6 zapisane w nawiasach kwadratowych.
+
+Pełne informacje o wydaniu od twórców: https://github.com/simplex-chat/simplexmq/releases/tag/v7.0.0`,
+    fr_FR: `Met à jour SimpleX vers la version 7.0.0.
+
+- Corrige deux fuites de mémoire du serveur SMP qui augmentaient au fil des abonnements et désabonnements des clients.
+- Le proxy SMP se reconnecte de manière fiable à un relais après le redémarrage de celui-ci.
+- Renforcement de la cryptographie et de l'analyse des messages, dont une limite sur la taille des messages décompressés.
+- Accepte les adresses de serveur IPv6 écrites entre crochets.
+
+Notes de version complètes du projet amont : https://github.com/simplex-chat/simplexmq/releases/tag/v7.0.0`,
   },
   migrations: {},
 })
