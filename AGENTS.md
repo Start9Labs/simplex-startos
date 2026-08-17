@@ -6,14 +6,14 @@ Develop it inside a StartOS packaging workspace created by `start-cli s9pk init-
 which provides the packaging guide and agent context one level up. If you're reading this in a
 bare clone with no workspace, the full guide is at <https://docs.start9.com/packaging>.
 
-Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture, for developers and LLMs) and `instructions.md` (end-user docs) in sync with your changes.
+Work this package's `TODO.md` from top to bottom. Keep `README.md` (technical reference for an AI support or administering agent) and `instructions.md` (end-user docs) in sync with your changes.
 
 ## This repo
 
-- **Package id is `simplex`.** Ships two independent daemons in separate subcontainers: `smp` (SMP messaging server, subcontainer `smp-sub`, interface id `smp` on host `main`) and `xftp` (XFTP file-transfer server, subcontainer `xftp-sub`, interface id `xftp` on host `xftp`). Both are `api` interfaces with credentials embedded in the connection URL.
-- **Tor SOCKS is resolved reactively over the LXC bridge.** When the `tor-settings` action enables it, `watchTorProxy` resolves the optional `tor` dependency's SOCKS binding through `sdk.host.getBridgeAddress` — `sdk.host.getBridgeAddress(effects, { packageId: 'tor', hostId: socksHostId, internalPort: socksPort }).const()` (host id / port imported from `tor-startos/startos/utils`) — and writes the resolved `10.0.3.1:<assigned port>` into `[PROXY] socks_proxy` in `smp-server.ini`. No `fallbackPort` (anonymizing semantics: never dial a dead address), so the proxy line is written only once Tor's binding resolves; the `.const()` subscription heals on a late Tor install and does not restart the server on Tor updates.
-- **INI file models use the custom parser in `startos/fileModels/ini-lib.ts`** (accepts both `=` and `:` separators, writes `=`). See `TODO.md` for the plan to retire it.
-
-## Inspecting a running install
-
-To run a command inside the service's container (read its generated config, grep app logs), use `start-cli package attach simplex -n <name> -- <cmd>`. Select the subcontainer by **name** with `-n` (the name passed to `SubContainer.of` in `main.ts` — here `smp-sub` or `xftp-sub`) or by image with `-i`. Note: `-s/--subcontainer` matches the internal **Guid**, not the name, so passing a name to `-s` fails with "no matching subcontainers".
+- **`smp-server.ini` is the source of truth for `create_password`, and every init re-asserts it into `file-server.ini`.** The two servers must never drift apart — a client's XFTP address carries the same password as its SMP one.
+- **The Tor proxy takes no fallback port.** Anonymising semantics mean a dead address must never be dialled, so `socks_proxy` is written only once tor's binding resolves. The `.const()` heals on a late tor install with one restart and never restarts on tor updates.
+- **The fingerprints under `smp-configs`/`xftp-configs` are the server identities.** They are what the published addresses are built from and cannot be regenerated — anything that would recreate or relocate them changes every client's saved address.
+- **Both interfaces must stay `masked`.** Their addresses embed `fingerprint:password`, so they are credentials rather than links.
+- **`main`, `conf`, `xftp`, and `log` are retained solely for the `6.5.2:1` migration path**, which relocates the old single-volume layout. Don't reuse them for new data, and don't drop them from the manifest.
+- **The INI files use a custom codec (`fileModels/ini-lib.ts`), not a stock format.** Adding a key means the codec has to round-trip it; check both directions.
+- **The `[WEB]` block is modelled but the info page is not enabled.** Turning it on needs the static site generated at init time and a user-facing opt-out — see the commented plan in `interfaces.ts` before wiring it up.

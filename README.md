@@ -4,15 +4,15 @@
 
 # SimpleX Server on StartOS
 
-> **Upstream docs:** <https://simplex.chat/docs/guide/readme.html>
->
 > Everything not listed in this document should behave the same as upstream
 > SimpleX. If a feature, setting, or behavior is not mentioned here, the
-> upstream documentation is accurate and fully applicable.
+> upstream documentation is accurate and fully applicable — see the
+> Documentation section of `instructions.md` for links.
 
-This repository packages [SimpleX](https://github.com/simplex-chat/simplexmq) for StartOS. SimpleX provides private messaging (SMP) and file transfer (XFTP) servers with no user identifiers.
+[SimpleX](https://github.com/simplex-chat/simplexmq/) is a messaging network with no user identifiers at all. This package runs both server roles it needs — the SMP message relay and the XFTP file relay — generates one password for both, and builds the server addresses your clients paste in.
 
-This package runs both SMP and XFTP servers with auto-generated credentials and pre-configured defaults. Connection URLs with embedded fingerprints and passwords are automatically generated for easy client configuration.
+- **Upstream repo:** <https://github.com/simplex-chat/simplexmq/>
+- **Wrapper repo:** <https://github.com/Start9Labs/simplex-startos>
 
 ---
 
@@ -20,136 +20,151 @@ This package runs both SMP and XFTP servers with auto-generated credentials and 
 
 - [Image and Container Runtime](#image-and-container-runtime)
 - [Volume and Data Layout](#volume-and-data-layout)
-- [Installation and First-Run Flow](#installation-and-first-run-flow)
-- [Configuration Management](#configuration-management)
-- [Network Access and Interfaces](#network-access-and-interfaces)
-- [Actions (StartOS UI)](#actions-startos-ui)
-- [Backups and Restore](#backups-and-restore)
-- [Health Checks](#health-checks)
+- [File Models](#file-models)
 - [Dependencies](#dependencies)
+- [Network Access and Interfaces](#network-access-and-interfaces)
+- [Installation and First-Run Flow](#installation-and-first-run-flow)
+- [Actions](#actions)
+- [Tasks](#tasks)
+- [Health Checks](#health-checks)
+- [Backups and Restore](#backups-and-restore)
 - [Limitations and Differences](#limitations-and-differences)
-- [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
-- [Contributing](#contributing)
 - [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
 ## Image and Container Runtime
 
-This package runs **2 containers**:
+Two upstream images, unmodified, run as two independent daemons.
 
-| Container | Image                     | Purpose                               |
-| --------- | ------------------------- | ------------------------------------- |
-| smp       | `simplexchat/smp-server`  | SimpleX Messaging Protocol server     |
-| xftp      | `simplexchat/xftp-server` | SimpleX File Transfer Protocol server |
+| Property      | Value                                               |
+| ------------- | --------------------------------------------------- |
+| Images        | `simplexchat/smp-server`, `simplexchat/xftp-server` |
+| Architectures | x86_64, aarch64                                     |
+| Entrypoint    | Each image's own                                    |
 
-- **Architectures:** x86_64 and aarch64
-- **Entrypoint:** Default upstream entrypoints for both containers
+| Subcontainer            | Purpose                                               |
+| ----------------------- | ----------------------------------------------------- |
+| `smp-sub`               | The SMP message relay — the one to `attach` to        |
+| `xftp-sub`              | The XFTP file relay                                   |
+| `init-smp`, `init-xftp` | Temporary; the install-time key and config generation |
+
+Neither daemon waits on the other. They are separate servers that happen to be packaged together, and one can be healthy while the other is not.
 
 ## Volume and Data Layout
 
-| Volume         | Mount Point             | Container | Contents                                                                          |
-| -------------- | ----------------------- | --------- | --------------------------------------------------------------------------------- |
-| `smp-configs`  | `/etc/opt/simplex`      | smp       | SMP server configuration, TLS keys, fingerprint                                   |
-| `smp-state`    | `/var/opt/simplex`      | smp       | SMP message queues, server state, and `store.json` (StartOS-managed action state) |
-| `xftp-configs` | `/etc/opt/simplex-xftp` | xftp      | XFTP server configuration, TLS keys, fingerprint                                  |
-| `xftp-state`   | `/var/opt/simplex-xftp` | xftp      | XFTP file metadata and state                                                      |
-| `xftp-files`   | `/srv/xftp`             | xftp      | Uploaded file storage                                                             |
+Nine volumes are declared, five carry data, and four exist only for a migration.
 
-`store.json` is a StartOS-only file (never read by smp-server) that records action-driven toggles — currently just `enableTorProxy: boolean`.
+| Volume                        | Mount Point             | Purpose                                                |
+| ----------------------------- | ----------------------- | ------------------------------------------------------ |
+| `smp-configs`                 | `/etc/opt/simplex`      | `smp-server.ini`, the server keys, and its fingerprint |
+| `smp-state`                   | `/var/opt/simplex`      | The message store and `store.json`                     |
+| `xftp-configs`                | `/etc/opt/simplex-xftp` | `file-server.ini`, its keys, and its fingerprint       |
+| `xftp-state`                  | `/var/opt/simplex-xftp` | XFTP's own state                                       |
+| `xftp-files`                  | `/srv/xftp`             | The files clients have uploaded                        |
+| `main`, `conf`, `xftp`, `log` | — (unused)              | Retained only for the 6.5.2:1 migration path           |
 
-## Installation and First-Run Flow
+**The fingerprints under the two config volumes are the servers' identities.** A SimpleX address is built from the fingerprint, so losing those keys means every client's saved address for this server stops working — there is no way to regenerate the same one.
 
-On first install:
+`xftp-files` is the one that grows: it holds whatever clients have uploaded, under a storage quota set at install.
 
-1. Generates a shared authentication password (21-character random string)
-2. Initializes SMP server (`smp-server init`) — creates TLS keys and fingerprint
-3. Writes SMP configuration with the generated password
-4. Initializes XFTP server (`xftp-server init`) — creates TLS keys and fingerprint
-5. Writes XFTP configuration with the same shared password
+## File Models
 
-On update/restore, existing configuration files are merged with defaults (preserving user values).
+Two models, one per server, and both are INI files with a custom serializer and parser rather than a stock format.
 
-## Configuration Management
+| File              | Volume         | Modelled                                   | Written by                              |
+| ----------------- | -------------- | ------------------------------------------ | --------------------------------------- |
+| `smp-server.ini`  | `smp-configs`  | Yes — `FileHelper` with a custom INI codec | Install, every init, and the Tor action |
+| `file-server.ini` | `xftp-configs` | Yes — same codec                           | Install, and every init                 |
+| `store.json`      | `smp-state`    | Yes — `FileHelper.json`                    | The Tor action                          |
 
-| StartOS-Managed (enforced)                                                                                                                                    | Upstream-Managed (pass-through) |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `TRANSPORT.host: <hostnames>`, `TRANSPORT.port: 5223,443` (smp) / `5225` (xftp); smp also pins `control_port: 5224`, `log_tls_errors: off`, `websockets: off` | Stats / Prometheus interval     |
-| `STORE_LOG.enable: on`, `expire_messages_days: 365`, `expire_messages_on_start: off`, `expire_ntfs_hours: 168` (smp)                                          | Any other key not listed here   |
-| `FILES.path`, `FILES.storage_quota: 10gb` (xftp)                                                                                                              |                                 |
-| `AUTH.create_password` (auto-generated 21-char)                                                                                                               |                                 |
-| `INACTIVE_CLIENTS.disconnect: off` (both)                                                                                                                     |                                 |
-| `WEB.static_path`, `WEB.http: 8000`; `WEB.https`/`cert`/`key` stripped — StartOS terminates TLS                                                               |                                 |
-| `PROXY.socks_proxy` — written/stripped by the **Tor Settings** action                                                                                         |                                 |
+**Enforced** — rewritten whenever the package writes: the listen hosts and ports for both servers, message retention and expiry, TLS error logging, websockets off, the control port, inactive-client disconnection off, the XFTP file path and quota, and the web block's paths.
 
-StartOS INI schemas only constrain the fields above. Unknown keys are preserved by `merge()`, so advanced users may edit the INI files directly in the config volumes to set anything else (control ports, inactive-client timeouts, stats/prometheus, etc.) and those values will survive StartOS rewrites.
+**Seeded once at install** — `create_password`, generated as a 21-character value. **The same password is written into both files**, and every later init re-reads it from the SMP config and re-asserts it into XFTP's, so the two can never drift apart.
 
-## Network Access and Interfaces
+**Derived** — `socks_proxy`, written from Tor's bridge address when the Tor setting is on. **There is no fallback port**: the proxy line is written only once Tor's binding actually resolves, because a dead address here would mean traffic meant to be anonymised going somewhere else. Installing Tor later heals it with one restart.
 
-| Interface   | ID     | Type | Port | Scheme    | Description                              |
-| ----------- | ------ | ---- | ---- | --------- | ---------------------------------------- |
-| SMP Server  | `smp`  | api  | 5223 | `smp://`  | Messaging protocol (also listens on 443) |
-| XFTP Server | `xftp` | api  | 5225 | `xftp://` | File transfer protocol                   |
-
-Both interfaces are **masked** and include credentials in the connection URL:
-
-```
-smp://<fingerprint>:<password>@<hostname>:5223
-xftp://<fingerprint>:<password>@<hostname>:5225
-```
-
-## Actions (StartOS UI)
-
-| Action       | ID             | Purpose                                                                                      | Inputs                                                                                                                                                                                                                                                                                                                     | Availability |
-| ------------ | -------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| Tor Settings | `tor-settings` | Configure whether this SMP server forwards messages to `.onion` destination servers via Tor. | `enableTorProxy: boolean` (default `false`) — when on, adds a running dependency on the Tor service and writes Tor's SOCKS bridge address (`10.0.3.1:<assigned port>`, resolved via `sdk.host.getBridgeAddress`) to `[PROXY] socks_proxy` in `smp-server.ini`; when off, strips that setting and drops the Tor dependency. | Any status   |
-
-The form is prepopulated from `enableTorProxy` in `store.json`; submissions merge the new value back.
-
-## Backups and Restore
-
-**Backed up volumes:** `smp-configs`, `smp-state`, `xftp-configs`, `xftp-state`, `xftp-files`
-
-**Important:** The server fingerprint is part of your server identity. Losing the config volumes means clients must reconnect to a "new" server.
-
-**Restore behavior:** All volumes are restored in place. The server resumes with the same identity, queues, and files.
-
-## Health Checks
-
-| Check       | Daemon | Method                | Success Condition  |
-| ----------- | ------ | --------------------- | ------------------ |
-| SMP Server  | smp    | Port listening (5223) | Port 5223 responds |
-| XFTP Server | xftp   | Port listening (5225) | Port 5225 responds |
-
-Both daemons start independently (no ordering dependency).
+`store.json` holds one boolean: whether Tor forwarding is on.
 
 ## Dependencies
 
-| Service | Required?                                                                         | Version       | Health Checks | Purpose                                                                                                |
-| ------- | --------------------------------------------------------------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
-| `tor`   | Optional — only active when `enableTorProxy` is on in the **Tor Settings** action | `>=0.4.9.5:0` | none          | Provides the SOCKS5 endpoint that smp-server uses to forward messages to `.onion` destination servers. |
+One, optional, and only while you have asked for it.
 
-When `enableTorProxy` is off (default), the package has no runtime dependencies.
+| Dependency | Kind      | Required                     |
+| ---------- | --------- | ---------------------------- |
+| `tor`      | `running` | Only with the Tor setting on |
+
+Tor is needed for the SMP server to forward messages on to `.onion` destination servers. Without it, this server still works for every clearnet destination.
+
+## Network Access and Interfaces
+
+Two interfaces, both masked, and **both carry a credential in the address itself**.
+
+| Interface   | Id     | Type | Port | Description                 |
+| ----------- | ------ | ---- | ---- | --------------------------- |
+| SMP Server  | `smp`  | api  | 5223 | The SMP server for SimpleX  |
+| XFTP Server | `xftp` | api  | 5225 | The XFTP server for SimpleX |
+
+Each advertises itself with a `smp://` or `xftp://` scheme rather than an HTTP one, and each address embeds `<fingerprint>:<password>` — which is exactly the form a SimpleX client expects to be given. **That is why both are masked**: the address is a secret, not a link to share.
+
+Both bindings are marked secure with TLS, since the SimpleX protocol carries its own transport security.
+
+## Installation and First-Run Flow
+
+Install generates everything and asks nothing. It runs each server's own `init` command in a temporary container, which creates the server keys and the fingerprint that becomes part of your address, and generates the single password both servers share.
+
+There is no task and no web UI. **The whole product is the two addresses**, which appear on the service page once the servers are running — copy them into a SimpleX client's server settings.
+
+The XFTP server is initialised with a fixed storage quota, which is what bounds how much clients can upload.
+
+## Actions
+
+One action.
+
+### Tor Settings
+
+Whether the SMP server forwards messages on to `.onion` destination servers through Tor.
+
+- **What it changes:** `enableTorProxy` in `store.json`; through it the package's dependency and the `socks_proxy` line in `smp-server.ini`.
+- **Cost:** seconds, then a restart.
+- **Repeat safety:** idempotent. Turning it off removes the proxy line rather than leaving a stale one.
+- **Turning it on before Tor is installed is not an error.** No proxy line is written until Tor's address resolves, and it appears on its own once Tor is there.
+
+## Tasks
+
+None. This package raises no tasks, so the service is never held on a prompt and its ordinary controls are always available.
+
+## Health Checks
+
+Two checks, one per server, and they are independent.
+
+| Check  | Displayed     | Method                 |
+| ------ | ------------- | ---------------------- |
+| `smp`  | "SMP Server"  | Port 5223 is listening |
+| `xftp` | "XFTP Server" | Port 5225 is listening |
+
+Neither gates the other, so one red and one green is a real state: messaging works and file transfer does not, or vice versa.
+
+Both servers refuse to start without their config file, and the package throws with a clear message rather than starting a daemon that would fail obscurely. A failure after that is the server itself, named in the service logs.
+
+## Backups and Restore
+
+Five volumes are copied wholesale — everything except the four migration-only ones.
+
+- **Included:** both servers' keys and fingerprints, both INI files with the shared password, the message store, and every uploaded file.
+- **This backup contains the server identities.** Anyone holding it can stand up a server that clients accept as yours.
+- **Size:** dominated by `xftp-files`, up to whatever the storage quota allows.
+- **Restore:** complete, and **the addresses are unchanged**, because the fingerprints and the password come back with them. Clients keep working with no reconfiguration — which is the point of backing this up at all.
 
 ## Limitations and Differences
 
-1. **No web UI** — server administration is config-file only
-2. **Fixed storage quota** — XFTP is limited to 10 GB (requires direct INI file edit to change)
-3. **No stats dashboard** — Prometheus metrics interval is not configured by default
-4. **TLS is not served by smp-server** — StartOS terminates TLS for the web info page, so `WEB.https`/`cert`/`key` are stripped from `smp-server.ini` on every merge; Let's Encrypt / direct HTTPS configuration on the smp-server side is disabled by design
-5. **Tor SOCKS proxy is opt-in only** — the `[PROXY] socks_proxy` setting is toggled solely by the `tor-settings` action; hand-edits to that field will be overwritten on the next init run
-
-## What Is Unchanged from Upstream
-
-- Full SMP/XFTP protocol support
-- End-to-end encryption
-- Message queue functionality
-- File transfer capabilities
-- Client compatibility (SimpleX Chat, etc.)
-
-## Contributing
-
-Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure.
+1. **Both servers share one password**, re-asserted from the SMP config into XFTP's on every start.
+2. **The server addresses are secrets**, and both interfaces are masked for that reason.
+3. **Losing the config volumes loses the addresses permanently.** The fingerprint cannot be regenerated.
+4. **The XFTP storage quota is fixed at install** and is not exposed as a setting.
+5. **The Tor proxy fails closed.** With the setting on and Tor absent, no proxy line is written rather than one pointing at a dead port.
+6. **There is no web interface.** SimpleX's optional read-only info page is not enabled by this package.
+7. **No riscv64 build.** x86_64 and aarch64 only.
 
 ---
 
@@ -157,24 +172,39 @@ Build and development workflow follow the StartOS packaging guide: <https://docs
 
 ```yaml
 package_id: simplex
-image: simplexchat/smp-server, simplexchat/xftp-server
-architectures: [x86_64, aarch64]
+image: simplexchat/smp-server # plus simplexchat/xftp-server
+architectures:
+  - x86_64
+  - aarch64
+subcontainers:
+  - smp-sub # the message relay; the one to attach to
+  - xftp-sub # the file relay
+  - init-smp # temporary; install-time key and config generation
+  - init-xftp # temporary; install-time key and config generation
 volumes:
   smp-configs: /etc/opt/simplex
   smp-state: /var/opt/simplex
   xftp-configs: /etc/opt/simplex-xftp
   xftp-state: /var/opt/simplex-xftp
   xftp-files: /srv/xftp
-ports:
-  smp: 5223
-  xftp: 5225
-dependencies:
-  tor:
-    required: false
-    activated_by: tor-settings action (enableTorProxy=true)
+  main: unused; legacy
+  conf: unused; legacy
+  xftp: unused; legacy
+  log: unused; legacy
+file_models:
+  - smp-server.ini
+  - file-server.ini
+  - store.json
 startos_managed_env_vars: []
+dependencies:
+  - tor # optional, running; only while the Tor setting is on
+interfaces:
+  smp: { type: api, port: 5223 } # masked; address embeds fingerprint:password
+  xftp: { type: api, port: 5225 } # masked; address embeds fingerprint:password
 actions:
   - tor-settings
-startos_managed_files:
-  - smp-state/store.json
+tasks: []
+health_checks:
+  - smp # displayed "SMP Server"
+  - xftp # displayed "XFTP Server"
 ```

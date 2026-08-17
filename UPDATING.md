@@ -11,7 +11,7 @@ This package wraps two upstream binaries — `smp-server` (SMP messaging) and `x
   ```
 
   > [!WARNING]
-  > **Do not use `gh release view` on this repo — it under-reports.** Upstream routinely marks stable point releases as GitHub *pre-releases*, so they never become "Latest". `gh release view -R simplex-chat/simplexmq` returns **v6.5.0** while the current pin is **v6.5.2** — i.e. the doc'd query looks like a *downgrade* from what's already shipping. Filter the tag list instead, as above.
+  > **Do not use `gh release view` on this repo — it under-reports.** Upstream routinely marks stable point releases as GitHub _pre-releases_, so they never become "Latest". `gh release view -R simplex-chat/simplexmq` returns **v6.5.0** while the current pin is **v6.5.2** — i.e. the doc'd query looks like a _downgrade_ from what's already shipping. Filter the tag list instead, as above.
   >
   > The `select(test(...))` filter is what keeps `v7.0.0-beta.*` out of the results. Those betas are real tags and are published to Docker Hub — **do not chase them.** Only pin a plain `vX.Y.Z` tag.
 
