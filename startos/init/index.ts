@@ -10,9 +10,9 @@ import { watchTorProxy } from './watchTorProxy'
 export const init = sdk.setupInit(
   restoreInit,
   versionGraph,
+  initServers,
   setInterfaces,
   actions,
-  initServers,
   watchTorProxy,
   setDependencies,
 )
