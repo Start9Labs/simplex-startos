@@ -1,6 +1,6 @@
 import { FileHelper } from '@start9labs/start-sdk'
 import { sdk } from './sdk'
-import { smpPort, xftpPort } from './utils'
+import { smpPort, xftpHostId, xftpInterfaceId, xftpPort } from './utils'
 import { smpServerIni } from './fileModels/smpServer.ini'
 import { i18n } from './i18n'
 
@@ -49,7 +49,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const smpReceipt = await smpMultiOrigin.export([smp])
 
   // ** XFTP Server **
-  const xftpMulti = sdk.MultiHost.of(effects, 'xftp')
+  const xftpMulti = sdk.MultiHost.of(effects, xftpHostId)
   const xftpMultiOrigin = await xftpMulti.bindPort(xftpPort, {
     protocol: null,
     addSsl: null,
@@ -58,7 +58,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   })
   const xftp = sdk.createInterface(effects, {
     name: i18n('XFTP Server'),
-    id: 'xftp',
+    id: xftpInterfaceId,
     description: i18n('The XFTP server for SimpleX'),
     type: 'api',
     masked: true,

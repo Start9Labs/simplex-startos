@@ -4,6 +4,9 @@ export const smpPort = 5223
 export const smpControlPort = 5224
 export const xftpPort = 5225
 
+export const xftpHostId = 'xftp'
+export const xftpInterfaceId = 'xftp'
+
 export const smpStatePath = '/var/opt/simplex'
 export const xftpFilePath = '/srv/xftp'
 export const xftpStorageQuota = '10gb'

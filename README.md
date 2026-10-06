@@ -70,13 +70,13 @@ Nine volumes are declared, five carry data, and four exist only for a migration.
 
 ## File Models
 
-Two models, one per server, and both are INI files with a custom serializer and parser rather than a stock format.
+Three models: one per server, both INI files with a custom serializer and parser rather than a stock format, and a small store the package keeps for itself.
 
-| File              | Volume         | Modelled                                   | Written by                              |
-| ----------------- | -------------- | ------------------------------------------ | --------------------------------------- |
-| `smp-server.ini`  | `smp-configs`  | Yes — `FileHelper` with a custom INI codec | Install, every init, and the Tor action |
-| `file-server.ini` | `xftp-configs` | Yes — same codec                           | Install, and every init                 |
-| `store.json`      | `smp-state`    | Yes — `FileHelper.json`                    | The Tor action                          |
+| File              | Volume         | Modelled                                   | Written by                                |
+| ----------------- | -------------- | ------------------------------------------ | ----------------------------------------- |
+| `smp-server.ini`  | `smp-configs`  | Yes — `FileHelper` with a custom INI codec | Install, every init, and the Tor action   |
+| `file-server.ini` | `xftp-configs` | Yes — same codec                           | Install, and every init                   |
+| `store.json`      | `smp-state`    | Yes — `FileHelper.json`                    | The Tor action, and the 7.0.1:2 migration |
 
 **Enforced** — rewritten whenever the package writes: the listen hosts and ports for both servers, message retention and expiry, TLS error logging, websockets off, the control port, inactive-client disconnection off, the XFTP file path and quota, and the web block's paths.
 
@@ -84,7 +84,7 @@ Two models, one per server, and both are INI files with a custom serializer and 
 
 **Derived** — `socks_proxy`, written from Tor's bridge address when the Tor setting is on. **There is no fallback port**: the proxy line is written only once Tor's binding actually resolves, because a dead address here would mean traffic meant to be anonymised going somewhere else. Installing Tor later heals it with one restart.
 
-`store.json` holds one boolean: whether Tor forwarding is on.
+`store.json` holds two booleans: `enableTorProxy`, whether Tor forwarding is on, and `reattachTorOnions`, set by the 7.0.1:2 migration on a server carried over from StartOS 0.3.5 and cleared once its XFTP `.onion` address has moved (see Network Access and Interfaces).
 
 ## Dependencies
 
@@ -108,6 +108,8 @@ Two interfaces, both masked, and **both carry a credential in the address itself
 Each advertises itself with a `smp://` or `xftp://` scheme rather than an HTTP one, and each address embeds `<fingerprint>:<password>` — which is exactly the form a SimpleX client expects to be given. **That is why both are masked**: the address is a secret, not a link to share.
 
 Both bindings are marked secure with TLS, since the SimpleX protocol carries its own transport security.
+
+**A server carried over from StartOS 0.3.5** had its XFTP server on internal port 443 of the same `xftp` host. The 7.0.1:2 migration retires that port. Once Tor 0.4.9.13:1 or later is installed, init moves that version's `.onion` address onto the XFTP binding on port 5225, keeping the hostname, through Tor's `setupOnionReattachment`; until then `store.json`'s `reattachTorOnions` stays `true`. The SMP server's old port, 5223 on the `main` host, is unchanged.
 
 ## Installation and First-Run Flow
 
@@ -194,7 +196,7 @@ volumes:
 file_models:
   - smp-server.ini
   - file-server.ini
-  - store.json
+  - store.json # enableTorProxy; reattachTorOnions flag
 startos_managed_env_vars: []
 dependencies:
   - tor # optional, running; only while the Tor setting is on
