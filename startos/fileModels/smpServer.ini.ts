@@ -3,18 +3,18 @@ import { sdk } from '../sdk'
 import { smpControlPort, smpPort, smpStatePath, webPort } from '../utils'
 import * as INI from './ini-lib'
 
-const storeLogSchema = z.object({
+const storeLogSchema = z.looseObject({
   enable: z.literal('on').catch('on'),
   expire_messages_days: z.literal(365).catch(365),
   expire_messages_on_start: z.literal('off').catch('off'),
   expire_ntfs_hours: z.literal(168).catch(168),
 })
 
-const authSchema = z.object({
+const authSchema = z.looseObject({
   create_password: z.string(),
 })
 
-const transportSchema = z.object({
+const transportSchema = z.looseObject({
   host: z.literal('<hostnames>').catch('<hostnames>'),
   port: z.literal(`${smpPort},443`).catch(`${smpPort},443`),
   log_tls_errors: z.literal('off').catch('off'),
@@ -22,15 +22,15 @@ const transportSchema = z.object({
   control_port: z.literal(smpControlPort).catch(smpControlPort),
 })
 
-const proxySchema = z.object({
+const proxySchema = z.looseObject({
   socks_proxy: z.string().optional().catch(undefined),
 })
 
-const inactiveClientsSchema = z.object({
+const inactiveClientsSchema = z.looseObject({
   disconnect: z.literal('off').catch('off'),
 })
 
-const webSchema = z.object({
+const webSchema = z.looseObject({
   static_path: z.literal(`${smpStatePath}/www`).catch(`${smpStatePath}/www`),
   http: z.literal(webPort).catch(webPort),
   https: z.undefined().catch(undefined),
@@ -38,7 +38,7 @@ const webSchema = z.object({
   key: z.undefined().catch(undefined),
 })
 
-const shape = z.object({
+const shape = z.looseObject({
   STORE_LOG: storeLogSchema.catch(() => storeLogSchema.parse({})),
   AUTH: authSchema,
   TRANSPORT: transportSchema.catch(() => transportSchema.parse({})),
@@ -56,7 +56,7 @@ export const smpServerIni = FileHelper.raw<SmpServerConfig>(
     base: sdk.volumes['smp-configs'],
     subpath: './smp-server.ini',
   },
-  (inData) => INI.stringify(inData),
+  (inData) => INI.stringify(inData as INI.IniInputData),
   (inString) => INI.parse(inString),
   (data) => shape.parse(data),
 )

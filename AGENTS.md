@@ -18,18 +18,23 @@ Freshly scaffolded? Work the
 guide page, not a file in this repo — read it, don't copy it in.
 
 Keep `README.md` (technical reference for an AI support or administering agent) and
-`instructions.md` (end-user docs) in sync with your changes.
+`instructions.md` (end-user docs) in sync with your changes. This file restates neither:
+whoever changes the package has both, so it carries only what they don't — repo mechanics,
+a change that looks right and is not, where the next thing gets added, a naming trap, a
+build or test invocation particular to this repo.
 
-**Bugs and feature requests are GitHub issues on this repo** — file them as you find them.
+**Fix a defect you spot rather than reporting it** — you have the package open and the
+context to be sure. File **a GitHub issue on this repo** only when the call isn't yours to
+make: you can't pin the cause down, two defensible fixes exist, or it's too large to ride on
+the work in hand. An open issue is a report, not a queue — implement one when you're asked
+to or when it's labelled `Approved`, then close it with `Closes #<n>`.
+
 Don't record work in the repo instead: no `TODO.md`, no `NOTES.md`, no `PLAN.md`. What you
 verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **`smp-server.ini` is the source of truth for `create_password`, and every init re-asserts it into `file-server.ini`.** The two servers must never drift apart — a client's XFTP address carries the same password as its SMP one.
-- **The Tor proxy takes no fallback port.** Anonymising semantics mean a dead address must never be dialled, so `socks_proxy` is written only once tor's binding resolves. The `.const()` heals on a late tor install with one restart and never restarts on tor updates.
-- **The fingerprints under `smp-configs`/`xftp-configs` are the server identities.** They are what the published addresses are built from and cannot be regenerated — anything that would recreate or relocate them changes every client's saved address.
-- **Both interfaces must stay `masked`.** Their addresses embed `fingerprint:password`, so they are credentials rather than links.
-- **`main`, `conf`, `xftp`, and `log` are retained solely for the `6.5.2:1` migration path**, which relocates the old single-volume layout. Don't reuse them for new data, and don't drop them from the manifest.
-- **The INI files use a custom codec (`fileModels/ini-lib.ts`), not a stock format.** Adding a key means the codec has to round-trip it; check both directions.
-- **The `[WEB]` block is modelled but the info page is not enabled.** Turning it on needs the static site generated at init time and a user-facing opt-out — see the commented plan in `interfaces.ts` before wiring it up.
+- **`create_password` is written once, into `smp-server.ini`; init copies it into `file-server.ini`.** Never seed or rotate the two separately — a client's XFTP address carries the SMP password.
+- **Don't give `socks_proxy` a fallback port.** It is written only once Tor's binding resolves, so a dead address is never dialled.
+- **Never recreate or relocate the fingerprints under `smp-configs`/`xftp-configs`, keep both interfaces `masked`, and keep the `main`, `conf`, `xftp`, `log` volumes declared.** The fingerprints are the server identities; the addresses embed `fingerprint:password`; the four volumes are read by the `6.5.2:1` migration. simplex-websocket-bridge-startos reads the `main`/`xftp` host ids and the `smp`/`xftp` interface ids, so renaming any of them breaks it.
+- **The INI files use the codec in `fileModels/ini-lib.ts`.** A new key has to round-trip through it in both directions. The `[WEB]` block is modelled but unused; `interfaces.ts` holds the plan for turning the info page on.
