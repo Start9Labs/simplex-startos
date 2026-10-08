@@ -1,7 +1,7 @@
 export default {
   torDescription: {
     en_US:
-      'Required when the "Enable Tor SOCKS Proxy" action is turned on. The SMP server uses Tor to forward messages to .onion destination servers on behalf of clients that use this server as their private-routing relay.',
+      'Required when Enable Tor SOCKS Proxy is turned on in the Tor Settings action. The SMP server uses Tor to forward messages to .onion destination servers on behalf of clients that use this server as their private-routing relay.',
   },
   description: {
     short: {

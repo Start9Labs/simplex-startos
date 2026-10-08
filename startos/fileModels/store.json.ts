@@ -1,8 +1,9 @@
 import { FileHelper, z } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 
-const shape = z.object({
+const shape = z.looseObject({
   enableTorProxy: z.boolean().catch(false),
+  reattachTorOnions: z.boolean().catch(false),
 })
 
 export type Store = z.infer<typeof shape>

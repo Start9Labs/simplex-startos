@@ -19,6 +19,8 @@ There is nothing to configure before first start. Both servers initialize themse
 2. Open the **SMP Server** interface and copy the connection URL (`smp://<fingerprint>:<password>@<hostname>:5223`). Paste it into your SimpleX client where it asks for an SMP server.
 3. Open the **XFTP Server** interface and copy that URL (`xftp://<fingerprint>:<password>@<hostname>:5225`) into the same client for XFTP.
 
+Coming from the StartOS 0.3.5 version of this package with a Tor address for XFTP? Once Tor is installed and up to date, that `.onion` address appears on the **XFTP Server** interface, now on port 5225. Copy the interface's URL into your clients again.
+
 The fingerprint is part of your server identity — if you lose the `smp-configs` / `xftp-configs` volumes, clients will see a different server and must reconnect. Keep StartOS backups enabled.
 
 ## Using SimpleX Server
