@@ -5,7 +5,7 @@ import { versionGraph } from '../versions'
 import { actions } from '../actions'
 import { restoreInit } from '../backups'
 import { initServers } from './initServers'
-import { reattachTorOnions } from './reattachTorOnions'
+import { reattachSmpOnions, reattachXftpOnions } from './reattachTorOnions'
 import { watchTorProxy } from './watchTorProxy'
 
 export const init = sdk.setupInit(
@@ -16,7 +16,8 @@ export const init = sdk.setupInit(
   actions,
   dependencies,
   watchTorProxy,
-  reattachTorOnions,
+  reattachXftpOnions,
+  reattachSmpOnions,
 )
 
 export const uninit = sdk.setupUninit(versionGraph)
