@@ -33,7 +33,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     protocol: null,
     addSsl: null,
     preferredExternalPort: smpPort,
-    secure: { ssl: true },
+    secure: { ssl: false },
   })
   const smp = sdk.createInterface(effects, {
     name: i18n('SMP Server'),
@@ -54,7 +54,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     protocol: null,
     addSsl: null,
     preferredExternalPort: xftpPort,
-    secure: { ssl: true },
+    secure: { ssl: false },
   })
   const xftp = sdk.createInterface(effects, {
     name: i18n('XFTP Server'),
