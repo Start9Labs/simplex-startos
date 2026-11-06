@@ -84,7 +84,7 @@ Three models: one per server, both INI files with a custom serializer and parser
 
 **Derived** — `socks_proxy`, written from Tor's bridge address when the Tor setting is on. **There is no fallback port**: the proxy line is written only once Tor's binding actually resolves, because a dead address here would mean traffic meant to be anonymised going somewhere else. Installing Tor later heals it with one restart.
 
-`store.json` holds two booleans: `enableTorProxy`, whether Tor forwarding is on, and `reattachTorOnions`, set by the 7.0.1:2 migration on a server carried over from StartOS 0.3.5 and cleared once its XFTP `.onion` address has moved (see Network Access and Interfaces).
+`store.json` holds three booleans: `enableTorProxy`, whether Tor forwarding is on, and two reattachment flags, `reattachTorOnions` (the `xftp` host) and `reattachSmpOnions` (the `main` host), each cleared once that host's unserved `.onion` addresses have moved (see Network Access and Interfaces).
 
 ## Dependencies
 
@@ -107,9 +107,11 @@ Two interfaces, both masked, and **both carry a credential in the address itself
 
 Each advertises itself with a `smp://` or `xftp://` scheme rather than an HTTP one, and each address embeds `<fingerprint>:<password>` — which is exactly the form a SimpleX client expects to be given. **That is why both are masked**: the address is a secret, not a link to share.
 
-Both bindings are marked secure with TLS, since the SimpleX protocol carries its own transport security.
+Both bindings are plain TCP to StartOS (`secure: { ssl: false }`): the servers terminate their own TLS, and StartOS forwards the port without inspecting it. SimpleX clients send no SNI, which a TLS binding needs to route a public domain.
 
 **A server carried over from StartOS 0.3.5** had its XFTP server on internal port 443 of the same `xftp` host. The 7.0.1:2 migration retires that port. Once Tor 0.4.9.13:1 or later is installed, init moves that version's `.onion` address onto the XFTP binding on port 5225, keeping the hostname, through Tor's `setupOnionReattachment`; until then `store.json`'s `reattachTorOnions` stays `true`. The SMP server's old port, 5223 on the `main` host, is unchanged.
+
+**The 7.0.1:3 migration moves both bindings off the TLS leg**, which leaves any `.onion` added under an earlier version pointing at a leg that no longer exists. It sets both reattachment flags, and init moves each host's `.onion` addresses onto the plain binding, keeping the hostname, by the same Tor mechanism and under the same Tor version requirement.
 
 ## Installation and First-Run Flow
 
@@ -196,7 +198,7 @@ volumes:
 file_models:
   - smp-server.ini
   - file-server.ini
-  - store.json # enableTorProxy; reattachTorOnions flag
+  - store.json # enableTorProxy; reattachTorOnions, reattachSmpOnions flags
 startos_managed_env_vars: []
 dependencies:
   - tor # optional, running; only while the Tor setting is on
