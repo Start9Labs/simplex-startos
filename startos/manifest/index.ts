@@ -11,6 +11,10 @@ export const manifest = setupManifest({
   donationUrl:
     'https://github.com/simplex-chat/simplex-chat#help-us-with-donations',
   description: i18n.description,
+  preDownloadAlert: {
+    message: i18n.journalStorageUpgradeWarning,
+    when: { sourceVersion: '<7.1.0:0' },
+  },
   volumes: [
     'smp-configs',
     'smp-state',
